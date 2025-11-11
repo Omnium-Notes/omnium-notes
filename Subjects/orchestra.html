@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>orchestra Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: white;
+      font-family: 'Bruno Ace', cursive;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #FFD54A;
+      margin: 20px 0;
+    }
+
+    .assignment-list {
+      padding: 20px;
+    }
+
+    .assignment-card {
+      background: #222;
+      border-radius: 12px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      gap: 10px;
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .assignment-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .assignment-due {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .checkbox-wrapper {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .complete-checkbox {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 25px;
+      height: 25px;
+      border-radius: 5px;
+      background: #222;
+      border: 2px solid white;
+    }
+
+    .checkbox-wrapper.checked-js::before {
+      background: #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    .checkbox-wrapper.checked-js::after {
+      content: '✓';
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .assignment-card.completed {
+      opacity: 0.6;
+      background: #111;
+    }
+
+    .assignment-card.completed .card-content {
+      text-decoration: line-through;
+      text-decoration-color: #B90101;
+    }
+
+    .priority-select {
+      background: #111;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .priority-low {
+      border-color: #4CAF50;
+      color: #4CAF50;
+    }
+
+    .priority-medium {
+      border-color: #FFD54A;
+      color: #FFD54A;
+    }
+
+    .priority-high {
+      border-color: #B90101;
+      color: #B90101;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #333;
+    }
+
+    .bottom-nav a {
+      position: relative;
+      text-decoration: none;
+      color: #aaa;
+      font-size: 28px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .bottom-nav a.active::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 55px;
+      height: 55px;
+      background: #363636ff;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .bottom-nav a.active {
+      color: #FFD54A;
+    }
+
+    @media (max-width: 700px) {
+      .assignment-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>orchestra Assignments</h1>
+
+  <div class="assignment-list" id="orchestra-list"></div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="../homepage.html">🏠</a>
+    <a href="../calendar.html">📅</a>
+    <a href="../notes.html" class="active">📝</a>
+    <a href="../clock.html">⏰</a>
+    <a href="../profile.html">👤</a>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
+    authDomain: "omnium-2ebd2.firebaseapp.com",
+    projectId: "omnium-2ebd2",
+    storageBucket: "omnium-2ebd2.firebasestorage.app",
+    messagingSenderId: "816486376253",
+    appId: "1:816486376253:web:6433e7e3d3f584ab919b54",
+    measurementId: "G-GWSKVGQP21"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const orchestraList = document.getElementById('orchestra-list');
+  let allAssignments = [];
+  let userDocRef = null;
+
+  // Load assignments from Firestore
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "../index.html";
+      return;
+    }
+
+    userDocRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userDocRef);
+    const userData = userSnap.exists() ? userSnap.data() : {};
+    allAssignments = userData.assignments || [];
+
+    renderorchestraAssignments();
+  });
+
+  function renderorchestraAssignments() {
+    orchestraList.innerHTML = '';
+    const orchestraAssignments = allAssignments.filter(a => a.subject === 'orchestra');
+
+    orchestraAssignments.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'assignment-card';
+      if(a.completed) card.classList.add('completed');
+
+      const cbWrap = document.createElement('div');
+      cbWrap.className = 'checkbox-wrapper';
+      if(a.completed) cbWrap.classList.add('checked-js');
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.className = 'complete-checkbox';
+      cb.checked = a.completed;
+      cb.onchange = () => toggleCompleted(cb, a);
+      cbWrap.appendChild(cb);
+
+      const content = document.createElement('div');
+      content.className = 'card-content';
+      const t = document.createElement('div');
+      t.className = 'assignment-title';
+      t.textContent = a.title;
+      const d = document.createElement('div');
+      d.className = 'assignment-due';
+      d.textContent = 'Due ' + a.due;
+      content.appendChild(t);
+      content.appendChild(d);
+
+      const select = document.createElement('select');
+      select.className = 'priority-select';
+      ['low','medium','high'].forEach(opt => {
+        const o = document.createElement('option');
+        o.value = opt;
+        o.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
+        if(opt === a.priority) o.selected = true;
+        select.appendChild(o);
+      });
+      updatePriorityColor(select);
+      select.onchange = () => changePriority(select, a);
+
+      card.appendChild(cbWrap);
+      card.appendChild(content);
+      card.appendChild(select);
+
+      orchestraList.appendChild(card);
+    });
+  }
+
+  async function toggleCompleted(cb, assignment) {
+    assignment.completed = cb.checked;
+    cb.closest('.assignment-card').classList.toggle('completed', cb.checked);
+    cb.closest('.checkbox-wrapper').classList.toggle('checked-js', cb.checked);
+    await saveAssignments();
+  }
+
+  async function changePriority(select, assignment) {
+    assignment.priority = select.value;
+    updatePriorityColor(select);
+    await saveAssignments();
+    renderorchestraAssignments();
+  }
+
+  function updatePriorityColor(select) {
+    select.classList.remove('priority-low','priority-medium','priority-high');
+    if(select.value==='low') select.classList.add('priority-low');
+    else if(select.value==='medium') select.classList.add('priority-medium');
+    else if(select.value==='high') select.classList.add('priority-high');
+  }
+
+  async function saveAssignments() {
+    if (userDocRef) {
+      await setDoc(userDocRef, { assignments: allAssignments }, { merge: true });
+    }
+  }
+</script>
+
+</body>
+</html>

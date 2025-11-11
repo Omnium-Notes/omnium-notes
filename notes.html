@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignments & Subjects</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0; 
+      background: #000;
+      color: white;
+      font-family: 'Bruno Ace', cursive;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Toggle Container */
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 25px;
+      flex-direction: column;
+    }
+
+    .toggle {
+      width: 220px;
+      height: 70px;
+      background: #434343;
+      border-radius: 50px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.4s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    .circle {
+      width: 55px;
+      height: 55px;
+      background: #B90101;
+      border-radius: 50%;
+      position: absolute;
+      left: 8px;
+      transition: all 0.4s ease;
+    }
+
+    .toggle.active .circle {
+      left: 157px;
+    }
+
+    .toggle-labels {
+      display: flex;
+      justify-content: space-between;
+      width: 220px;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .toggle-labels span {
+      color: #888;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-labels span.active-label {
+      color: #FFD54A;
+    }
+
+    /* --- PAGE CONTAINERS --- */
+    .view-container {
+      position: relative;
+      width: 100%;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .page {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 100%;
+      transition: left 0.4s ease;
+      padding-bottom: 100px;
+    }
+
+    .page.active {
+      left: 0;
+    }
+
+    .page.left {
+      left: -100%;
+    }
+
+    /* --- ASSIGNMENT PAGE --- */
+    .assignment-list {
+      padding: 20px;
+    }
+
+    .assignment-card {
+      background: #222;
+      border-radius: 12px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      gap: 10px;
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .assignment-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .assignment-due {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .checkbox-wrapper {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .complete-checkbox {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 25px;
+      height: 25px;
+      border-radius: 5px;
+      background: #222;
+      border: 2px solid white;
+    }
+
+    .checkbox-wrapper.checked-js::before {
+      background: #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    .checkbox-wrapper.checked-js::after {
+      content: '✓';
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .assignment-card.completed {
+      opacity: 0.6;
+      background: #111;
+    }
+
+    .assignment-card.completed .card-content {
+      text-decoration: line-through;
+      text-decoration-color: #B90101;
+    }
+
+    .priority-select {
+      background: #111;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .priority-low {
+      border-color: #4CAF50;
+      color: #4CAF50;
+    }
+
+    .priority-medium {
+      border-color: #FFD54A;
+      color: #FFD54A;
+    }
+
+    .priority-high {
+      border-color: #B90101;
+      color: #B90101;
+    }
+
+    /* Edit button (right edge) */
+    .edit-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      transition: transform 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .edit-button img {
+      width: 40px;
+      height: 40px;
+      display: block;
+    }
+
+    .edit-button:hover {
+      transform: scale(1.08);
+      filter: none;
+    }
+
+    /* --- SUBJECT SELECT --- */
+    .subject-select {
+      background: #111;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .subject-math {
+      background-color: #d50000;
+      border-color: #d50000;
+      color: white;
+    }
+
+    .subject-science {
+      background-color: #4285f4;
+      border-color: #4285f4;
+      color: white;
+    }
+
+    .subject-english {
+      background-color: #0dd000;
+      border-color: #0dd000;
+      color: black;
+    }
+
+    .subject-history {
+      background-color: #ffd54a;
+      border-color: #ffd54a;
+      color: black;
+    }
+
+    .subject-orchestra {
+      background-color: #7e00d2;
+      border-color: #7e00d2;
+      color: white;
+    }
+
+    .subject-spanish {
+      background-color: #ff9900;
+      border-color: #ff9900;
+      color: black;
+    }    
+
+    /* Add & Clear Buttons */
+    .add-button, .clear-button {
+      background: #222;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      border: 2px solid; /* individual color set below */
+    }
+
+    .add-button {
+      border-color: #FFD54A;
+    }
+
+    .add-button:hover {
+      background: #FFD54A;
+      color: #000;
+    }
+
+    .clear-button {
+      border-color: #B90101; /* red border */
+    }
+
+    .clear-button:hover {
+      background: #B90101;
+      color: white;
+    }
+
+    /* --- SUBJECT GRID PAGE --- */
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 380px;
+      padding: 10px;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+
+    .app-grid button {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      padding: 15px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      font-family: 'Bruno Ace', cursive;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .math { background-color: #d50000; }
+    .science { background-color: #4285f4; }
+    .english { background-color: #0dd000; }
+    .history { background-color: #ffd54a; color: #000; }
+    .orchestra { background-color: #7e00d2; }
+    .spanish { background-color: #ff9900; }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #333;
+    }
+
+    .bottom-nav a {
+      position: relative;
+      text-decoration: none;
+      color: #aaa;
+      font-size: 28px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .bottom-nav a.active::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 55px;
+      height: 55px;
+      background: #363636ff;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .bottom-nav a.active {
+      color: #FFD54A;
+    }
+
+    /* Modal Styling */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #000;
+      border: 2px solid #FFD54A;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: left;
+    }
+
+    .modal-content input,
+    .modal-content select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #FFD54A;
+      background: #111;
+      color: white;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .modal-buttons button:first-child {
+      background: #FFD54A;
+      color: #000;
+    }
+
+    .modal-buttons button:last-child {
+      background: #B90101;
+      color: white;
+    }
+
+/* =========================
+   Flatpickr Clean Dark Theme (Company Colors)
+   ========================= */
+
+/* Entire calendar container */
+.flatpickr-calendar {
+  background: #000000 !important;
+  border: 1px solid #FFD54A !important;
+  color: #FFD54A !important;
+  box-shadow: none !important;
+}
+
+/* Header and weekdays - remove gray background */
+.flatpickr-months,
+.flatpickr-weekdays {
+  background: #000000 !important;
+  box-shadow: none !important;
+  color: #FFD54A !important;
+  border: none !important;
+}
+
+/* Month title text */
+.flatpickr-current-month {
+  color: #FFD54A !important;
+}
+
+/* Arrows */
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  color: #FFD54A !important;
+  background: none !important;
+  fill: #FFD54A !important;
+}
+
+/* Day cells */
+.flatpickr-day {
+  background: none !important;
+  color: #FFD54A !important;
+  border: none !important;
+}
+
+/* Past days — darker yellow */
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #E8C741 !important; /* Keep faded for out-of-month days */
+  opacity: 1 !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.disabled {
+  opacity: 0.3 !important;
+}
+
+.flatpickr-day:not(.nextMonthDay):not(.prevMonthDay):not(.disabled):not(.today):not(.selected).flatpickr-disabled {
+  color: #806d1f !important; /* darker yellow for past days */
+}
+
+/* Today’s date */
+.flatpickr-day.today {
+  background: #B90101 !important;
+  color: #FFD54A !important;
+  border: 1px solid #FFD54A !important;
+}
+
+/* Selected date */
+.flatpickr-day.selected {
+  background: #B90101 !important;
+  color: #FFD54A !important;
+}
+
+/* Hover effect */
+.flatpickr-day:hover {
+  background: #FFD54A22 !important;
+  color: #FFD54A !important;
+}
+
+    /* Responsive small screens: keep edit button aligned */
+    @media (max-width: 480px) {
+      .assignment-card { gap: 8px; padding: 10px; }
+      .edit-button img { width: 22px; height: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toggle -->
+<div class="toggle-container">
+  <div class="toggle" id="viewToggle">
+    <div class="circle"></div>
+  </div>
+  <div class="toggle-labels">
+    <span id="assignLabel" class="active-label">Assignments</span>
+    <span id="subjectLabel">Subjects</span>
+  </div>
+</div>
+
+<!-- Pages -->
+<div class="view-container">
+  <div id="assignmentsPage" class="page active">
+    <div style="display: flex; gap: 10px; padding: 20px;">
+      <button class="add-button" onclick="showModal()">+ Add Assignment</button>
+      <button class="clear-button" onclick="clearAllAssignments()">Clear All Assignments</button>
+    </div>
+    <div class="assignment-list" id="assignment-list"></div>
+  </div>
+
+  <div id="subjectsPage" class="page">
+    <div class="app-grid">
+      <button class="math" onclick="location.href='Subjects/math.html'">Math</button>
+      <button class="science" onclick="location.href='Subjects/science.html'">Science</button>
+      <button class="english" onclick="location.href='Subjects/english.html'">English</button>
+      <button class="history" onclick="location.href='Subjects/history.html'">History</button>
+      <button class="orchestra" onclick="location.href='Subjects/orchestra.html'">Orchestra</button>
+      <button class="spanish" onclick="location.href='Subjects/spanish.html'">Spanish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <label>Title</label>
+    <input type="text" id="assignment-title" />
+    <label>Due Date</label>
+    <input type="text" id="assignment-due" placeholder="Select a due date" />
+    <label>Subject</label>
+    <select id="assignment-subject">
+      <option value="math">Math</option>
+      <option value="science">Science</option>
+      <option value="english">English</option>
+      <option value="history">History</option>
+      <option value="orchestra">Orchestra</option>
+      <option value="spanish">Spanish</option>
+    </select>
+    <label>Priority</label>
+    <select id="assignment-priority">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+    <div class="modal-buttons">
+      <!-- Primary button text changed to "Save" per your request -->
+      <button id="addAssignment" onclick="addAssignmentFromModal()">Save</button>
+      <button id="hideAssignment" onclick="hideModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="homepage.html">🏠</a>
+  <a href="calendar.html">📅</a>
+  <a href="notes.html" class="active">📝</a>
+  <a href="clock.html">⏰</a>
+  <a href="profile.html">👤</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
+    authDomain: "omnium-2ebd2.firebaseapp.com",
+    projectId: "omnium-2ebd2",
+    storageBucket: "omnium-2ebd2.firebasestorage.app",
+    messagingSenderId: "816486376253",
+    appId: "1:816486376253:web:6433e7e3d3f584ab919b54",
+    measurementId: "G-GWSKVGQP21"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let assignments = [];
+  let userDocRef = null;
+  const list = document.getElementById('assignment-list');
+  let editingAssignment = null;
+
+  // Firebase authentication and data loading
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    userDocRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userDocRef);
+    const userData = userSnap.exists() ? userSnap.data() : {};
+    assignments = userData.assignments || [];
+
+    renderAssignments();
+  });
+
+  // Save assignments to Firestore
+  async function saveAssignments() {
+    if (userDocRef) {
+      await setDoc(userDocRef, { assignments }, { merge: true });
+    }
+  }
+
+  // Clear all assignments
+  window.clearAllAssignments = async function() {
+    if (confirm("Are you sure you want to delete all assignments? This cannot be undone.")) {
+      assignments = [];
+      await saveAssignments();
+      renderAssignments();
+    }
+  }
+
+  // Initialize Flatpickr
+  function initDatePicker() {
+    flatpickr("#assignment-due", {
+      dateFormat: "M d, Y",
+      minDate: "today",
+      allowInput: true
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initDatePicker);
+
+  // Enter key handling
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      const modal = document.getElementById('modal');
+      if (modal.style.display === 'flex') {
+        event.preventDefault();
+        const title = document.getElementById("assignment-title").value.trim();
+        const due = document.getElementById("assignment-due").value.trim();
+        const priority = document.getElementById("assignment-priority").value.trim();
+        if (title && due && priority) {
+          document.getElementById("addAssignment").click();
+        } else {
+          document.getElementById("hideAssignment").click();
+        }
+      }
+    }
+  });
+
+  // Render assignments
+  function renderAssignments() {
+    list.innerHTML = '';
+    sortAssignmentsArray();
+    assignments.forEach(a => addAssignmentToDOM(a));
+  }
+
+  function sortAssignmentsArray() {
+    const priorityOrder = { high: 3, medium: 2, low: 1 };
+    assignments.sort((A, B) => {
+      if (A.completed && !B.completed) return 1;
+      if (!A.completed && B.completed) return -1;
+      return priorityOrder[B.priority] - priorityOrder[A.priority];
+    });
+  }
+
+  // Modal control
+  window.showModal = function() {
+    editingAssignment = null;
+    document.getElementById('assignment-title').value = '';
+    document.getElementById('assignment-due').value = '';
+    document.getElementById('assignment-priority').value = 'low';
+    document.getElementById('assignment-subject').value = 'math';
+    initDatePicker();
+
+    const addBtn = document.getElementById('addAssignment');
+    const cancelBtn = document.getElementById('hideAssignment');
+    addBtn.textContent = 'Save';
+    addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = hideModal;
+
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  window.hideModal = function() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('assignment-title').value = '';
+    document.getElementById('assignment-due').value = '';
+    document.getElementById('assignment-priority').value = 'low';
+    document.getElementById('assignment-subject').value = 'math';
+    editingAssignment = null;
+    const addBtn = document.getElementById('addAssignment');
+    const cancelBtn = document.getElementById('hideAssignment');
+    addBtn.textContent = 'Save';
+    addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.onclick = hideModal;
+  }
+
+  document.getElementById('modal').addEventListener('click', e=>{
+    if (e.target === document.getElementById('modal')) hideModal();
+  });
+
+  // Add/Edit assignment
+  window.addAssignmentFromModal = async function() {
+    const title = document.getElementById('assignment-title').value.trim();
+    const due = document.getElementById('assignment-due').value.trim();
+    const priority = document.getElementById('assignment-priority').value;
+    const subject = document.getElementById('assignment-subject').value;
+
+    if (!title || !due) { alert('Fill all fields'); return; }
+
+    if (editingAssignment) {
+      editingAssignment.title = title;
+      editingAssignment.due = due;
+      editingAssignment.priority = priority;
+      editingAssignment.subject = subject;
+      editingAssignment = null;
+    } else {
+      const assignment = { title, due, priority, subject, completed: false };
+      assignments.push(assignment);
+    }
+
+    await saveAssignments();
+    renderAssignments();
+    hideModal();
+  }
+
+  async function deleteAssignment(assignment) {
+    if (confirm('Delete this assignment?')) {
+      assignments = assignments.filter(a => a !== assignment);
+      await saveAssignments();
+      renderAssignments();
+      hideModal();
+    }
+  }
+
+  // Add assignment to DOM
+  function addAssignmentToDOM(a) {
+    const card = document.createElement('div');
+    card.className = 'assignment-card';
+    if (a.completed) card.classList.add('completed');
+
+    const cbWrap = document.createElement('div');
+    cbWrap.className = 'checkbox-wrapper';
+    if (a.completed) cbWrap.classList.add('checked-js');
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'complete-checkbox';
+    cb.checked = a.completed;
+    cb.onchange = () => toggleCompleted(cb, a);
+    cbWrap.appendChild(cb);
+
+    const content = document.createElement('div');
+    content.className = 'card-content';
+    const t = document.createElement('div');
+    t.className = 'assignment-title';
+    t.textContent = a.title;
+    const d = document.createElement('div');
+    d.className = 'assignment-due';
+    d.textContent = 'Due ' + a.due;
+    content.appendChild(t);
+    content.appendChild(d);
+
+    const subjectSelect = document.createElement('select');
+    subjectSelect.className = 'subject-select';
+    ['math','science','english','history','orchestra','spanish'].forEach(subj => {
+      const o = document.createElement('option');
+      o.value = subj;
+      o.textContent = subj.charAt(0).toUpperCase() + subj.slice(1);
+      if (subj === a.subject) o.selected = true;
+      subjectSelect.appendChild(o);
+    });
+    updateSubjectColor(subjectSelect);
+    subjectSelect.onchange = async () => {
+      a.subject = subjectSelect.value;
+      updateSubjectColor(subjectSelect);
+      await saveAssignments();
+    };
+
+    const prioritySelect = document.createElement('select');
+    prioritySelect.className = 'priority-select';
+    ['low','medium','high'].forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt;
+      o.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
+      if (opt === a.priority) o.selected = true;
+      prioritySelect.appendChild(o);
+    });
+    updatePriorityColor(prioritySelect);
+    prioritySelect.onchange = async () => {
+      a.priority = prioritySelect.value;
+      updatePriorityColor(prioritySelect);
+      await saveAssignments();
+      renderAssignments();
+    };
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-button';
+    const icon = document.createElement('img');
+    icon.src = 'edit1.png';
+    icon.alt = 'Edit';
+    editBtn.appendChild(icon);
+    editBtn.onclick = () => openEditModal(a);
+
+    card.appendChild(cbWrap);
+    card.appendChild(content);
+    card.appendChild(subjectSelect);
+    card.appendChild(prioritySelect);
+    card.appendChild(editBtn);
+
+    list.appendChild(card);
+  }
+
+  async function toggleCompleted(cb, assignment) {
+    assignment.completed = cb.checked;
+    const card = cb.closest('.assignment-card');
+    card.classList.toggle('completed', cb.checked);
+    cb.closest('.checkbox-wrapper').classList.toggle('checked-js', cb.checked);
+    await saveAssignments();
+    renderAssignments();
+  }
+
+  function updateSubjectColor(select) {
+    select.classList.remove('subject-math','subject-science','subject-english','subject-history','subject-orchestra','subject-spanish');
+    const subjectClass = 'subject-' + select.value;
+    select.classList.add(subjectClass);
+  }
+
+  function updatePriorityColor(select) {
+    select.classList.remove('priority-low','priority-medium','priority-high');
+    if (select.value === 'low') select.classList.add('priority-low');
+    else if (select.value === 'medium') select.classList.add('priority-medium');
+    else if (select.value === 'high') select.classList.add('priority-high');
+  }
+
+  function openEditModal(assignment) {
+    editingAssignment = assignment;
+    document.getElementById('assignment-title').value = assignment.title;
+    document.getElementById('assignment-due').value = assignment.due;
+    document.getElementById('assignment-priority').value = assignment.priority;
+    document.getElementById('assignment-subject').value = assignment.subject;
+    initDatePicker();
+
+    const addBtn = document.getElementById('addAssignment');
+    const cancelBtn = document.getElementById('hideAssignment');
+    addBtn.textContent = 'Save';
+    addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Delete';
+    cancelBtn.onclick = () => deleteAssignment(assignment);
+
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  // Toggle UI
+  const toggle = document.getElementById('viewToggle');
+  const assignmentsPage = document.getElementById('assignmentsPage');
+  const subjectsPage = document.getElementById('subjectsPage');
+  const assignLabel = document.getElementById('assignLabel');
+  const subjectLabel = document.getElementById('subjectLabel');
+
+  toggle.addEventListener('click', ()=>{
+    toggle.classList.toggle('active');
+    const isActive = toggle.classList.contains('active');
+    assignmentsPage.classList.toggle('active', !isActive);
+    subjectsPage.classList.toggle('active', isActive);
+    assignLabel.classList.toggle('active-label', !isActive);
+    subjectLabel.classList.toggle('active-label', isActive);
+  });
+</script>
+</body>
+</html>

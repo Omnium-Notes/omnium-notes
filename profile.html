@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Bruno Ace', cursive;
+      padding-bottom: 80px;
+    }
+
+    .profile-header {
+      background: #111;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .profile-pic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: gray;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      color: #000;
+    }
+
+    .display-name {
+      font-size: 48px;
+      color: #E2E2E2;
+    }
+
+    .username {
+      font-size: 30px;
+      color: #A5A5A5;
+    }
+
+    .section {
+      background: #333;
+      margin: 20px;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .coming-soon {
+      font-size: 28px;
+      color: #ddd;
+    }
+
+    .settings-btn {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 42px;
+      color: white;
+      background: #333;
+      border-radius: 18px;
+      padding: 20px;
+      margin: 25px 20px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+
+    .logout-btn {
+      display: block;
+      margin: 20px;
+      font-size: 36px;
+      color: red;
+      background: #000;
+      border: 3px solid red;
+      border-radius: 12px;
+      text-align: center;
+      padding: 15px 0;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      background: red;
+      color: gold;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #333;
+    }
+
+    .bottom-nav a {
+      position: relative;
+      text-decoration: none;
+      color: #aaa;
+      font-size: 28px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .bottom-nav a.active::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 55px;
+      height: 55px;
+      background: #363636ff;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .bottom-nav a.active {
+      color: #FFD54A;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-pic">👤</div>
+    <div class="display-name" id="displayName">Loading...</div>
+    <div class="username" id="username">Loading...</div>
+  </div>
+
+  <!-- Friends Section -->
+  <div class="section">
+    <div class="section-title">Friends:</div>
+    <div class="coming-soon">Coming Soon!</div>
+  </div>
+
+  <!-- Settings Button -->
+  <a class="settings-btn" href="#">
+    ⚙️ Settings
+  </a>
+
+  <!-- Logout Button -->
+  <a class="logout-btn" id="logoutBtn" href="index.html">Log out</a>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a href="homepage.html">🏠</a>
+    <a href="calendar.html">📅</a>
+    <a href="notes.html">📝</a>
+    <a href="clock.html">⏰</a>
+    <a class="active" href="profile.html">👤</a>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
+  authDomain: "omnium-2ebd2.firebaseapp.com",
+  projectId: "omnium-2ebd2",
+  storageBucket: "omnium-2ebd2.firebasestorage.app",
+  messagingSenderId: "816486376253",
+  appId: "1:816486376253:web:6433e7e3d3f584ab919b54",
+  measurementId: "G-GWSKVGQP21"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadProfile(){
+  const uid = localStorage.getItem("uid");
+  if(!uid) return;
+
+  const storedDisplayName = localStorage.getItem(`displayName_${uid}`);
+  const storedUsername = localStorage.getItem(`username_${uid}`);
+
+  if(storedDisplayName && storedUsername){
+    document.getElementById("displayName").textContent = storedDisplayName;
+    document.getElementById("username").textContent = storedUsername;
+  } else {
+    const userRef = doc(db,"users",uid);
+    const userSnap = await getDoc(userRef);
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      document.getElementById("displayName").textContent = data.displayName || "Guest";
+      document.getElementById("username").textContent = data.username || "guest";
+    }
+  }
+}
+
+loadProfile();
+</script>
+
+
+</body>
+</html>

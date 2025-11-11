@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Focus</title>
+
+  <!-- Bruno Ace font -->
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+
+  <!-- Chart.js and Moment.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding-bottom: 80px;
+    }
+
+    /* Chart Styles */
+    .chart-container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      background-color: #2d2d2dff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px auto 0;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Today's Focus Styles */
+    h2 {
+      margin: 20px 15px 10px;
+      font-size: 26px;
+      border-left: 5px solid #FFD54A;
+      padding-left: 10px;
+      color: #FFD54A;
+    }
+
+    #focusList {
+      padding: 10px 15px;
+    }
+
+    /* Assignment Cards (for Today's Focus) */
+    .assignment-card {
+      background: #222;
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s;
+    }
+
+    .assignment-card:hover {
+      transform: scale(1.012);
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Bruno Ace', cursive;
+      color: white;
+    }
+
+    .assignment-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .assignment-due {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    /* Subject Colors */
+    .subject-tag {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      white-space: nowrap;
+      color: white;
+    }
+
+    .subject-math { background-color: #d50000; color: white; }
+    .subject-science { background-color: #4285f4; color: white; }
+    .subject-english { background-color: #0dd000; color: black; }
+    .subject-history { background-color: #ffd54a; color: black; }
+    .subject-orchestra { background-color: #7e00d2; color: white; }
+    .subject-spanish { background-color: #ff9900; color: black; }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #333;
+    }
+
+    .bottom-nav a {
+      position: relative;
+      text-decoration: none;
+      color: #aaa;
+      font-size: 28px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .bottom-nav a.active::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 55px;
+      height: 55px;
+      background: #363636ff;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .bottom-nav a.active {
+      color: #FFD54A;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Chart Section -->
+  <div class="chart-container">
+    <h1>This Week’s Productivity</h1>
+    <canvas id="dailyTimeChart"></canvas>
+  </div>
+
+  <!-- Today's Focus Section -->
+  <h2>🔥 Today's Focus</h2>
+  <div id="focusList"></div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="homepage.html" class="active">🏠</a>
+    <a href="calendar.html">📅</a>
+    <a href="notes.html">📝</a>
+    <a href="clock.html">⏰</a>
+    <a href="profile.html">👤</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
+      authDomain: "omnium-2ebd2.firebaseapp.com",
+      projectId: "omnium-2ebd2",
+      storageBucket: "omnium-2ebd2.appspot.com",
+      messagingSenderId: "816486376253",
+      appId: "1:816486376253:web:6433e7e3d3f584ab919b54",
+      measurementId: "G-GWSKVGQP21"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ===== Chart Data =====
+    function getSevenDayData() {
+      const dailyLog = JSON.parse(localStorage.getItem('pomodoroDailyLog')) || {};
+      const sevenDays = [];
+      const workDataMap = new Map();
+      let maxTotalHours = 0;
+      const today = moment().startOf('day');
+
+      for (let i = 6; i >= 0; i--) {
+        const date = moment(today).subtract(i, 'days');
+        const dateKey = date.toDate().toLocaleDateString();
+        const dayLabel = date.format('ddd');
+        sevenDays.push(dayLabel);
+        const log = dailyLog[dateKey] || { work: 0, break: 0 };
+        const workHours = log.work / 60;
+        const breakHours = log.break / 60;
+        const totalHours = workHours + breakHours;
+        if (totalHours > maxTotalHours) maxTotalHours = totalHours;
+        workDataMap.set(dayLabel, { work: workHours.toFixed(1), break: breakHours.toFixed(1) });
+      }
+
+      const workData = sevenDays.map(day => workDataMap.get(day).work);
+      const breakData = sevenDays.map(day => workDataMap.get(day).break);
+      const chartMax = Math.ceil(maxTotalHours * 1.1) || 1;
+
+      return { labels: sevenDays, workData, breakData, chartMax };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const { labels, workData, breakData, chartMax } = getSevenDayData();
+      const ctx = document.getElementById('dailyTimeChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Work Time',
+              data: workData,
+              backgroundColor: '#FAC903',
+              borderColor: '#FAC903',
+              borderWidth: 1
+            },
+            {
+              label: 'Break Time',
+              data: breakData,
+              backgroundColor: '#B90101',
+              borderColor: '#B90101',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          aspectRatio: 1.8,
+          scales: {
+            x: { stacked: true, title: { display: true, text: 'Day of the Week', color: 'white' }, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+            y: { stacked: true, title: { display: true, text: 'Time (Hours)', color: 'white' }, beginAtZero: true, max: chartMax, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+          },
+          plugins: { legend: { position: 'top', labels: { color: 'white' } }, title: { display: false } }
+        }
+      });
+    });
+
+    // ===== Today’s Focus =====
+    async function renderTodaysFocus() {
+      const focusList = document.getElementById('focusList');
+      if (!focusList) return;
+
+      focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">Loading...</p>`;
+
+      try {
+        const user = auth.currentUser;
+        if (!user) { focusList.innerHTML = `<p style="color:red;">Not logged in</p>`; return; }
+
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+        const data = userSnap.exists() ? userSnap.data() : {};
+        const assignments = data.assignments || [];
+
+        if (assignments.length === 0) {
+          focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">No high-priority tasks 🎉</p>`;
+          return;
+        }
+
+        // Filter high-priority incomplete
+        const focus = assignments.filter(a => a.priority === 'high' && !a.completed);
+
+        // Sort by due date
+        focus.sort((a,b) => {
+          if(!a.due) return 1;
+          if(!b.due) return -1;
+          return new Date(a.due)-new Date(b.due);
+        });
+
+        if (focus.length === 0) {
+          focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">No high-priority tasks 🎉</p>`;
+          return;
+        }
+
+        const subjectClasses = {
+          math: 'subject-math',
+          science: 'subject-science',
+          english: 'subject-english',
+          history: 'subject-history',
+          orchestra: 'subject-orchestra',
+          spanish: 'subject-spanish'
+        };
+
+        focusList.innerHTML = '';
+        focus.forEach(a => {
+          const card = document.createElement('div');
+          card.className = 'assignment-card';
+
+          const content = document.createElement('div');
+          content.className = 'card-content';
+
+          const title = document.createElement('div');
+          title.className = 'assignment-title';
+          title.textContent = a.title;
+
+          const due = document.createElement('div');
+          due.className = 'assignment-due';
+          due.textContent = a.due ? `Due: ${a.due}` : 'No due date';
+
+          content.appendChild(title);
+          content.appendChild(due);
+
+          const subject = document.createElement('div');
+          const subjName = a.subject ? a.subject.toLowerCase() : 'math';
+          subject.textContent = subjName.charAt(0).toUpperCase() + subjName.slice(1);
+          subject.className = 'subject-tag ' + (subjectClasses[subjName] || 'subject-math');
+
+          card.appendChild(content);
+          card.appendChild(subject);
+          focusList.appendChild(card);
+        });
+
+      } catch(err) {
+        console.error('Error loading Today’s Focus:', err);
+        focusList.innerHTML = `<p style="color:red; padding:0 12px;">Error loading tasks</p>`;
+      }
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+      renderTodaysFocus();
+    });
+  </script><script src="/_libs_/zfs.js" id="playcode-zfs-script"></script><script src="/_deps_/deps-DV7IRNSR.js" id="playcode-deps-script"></script><script src="/homepage-PHA3QF5F.js" id="playcode-script"></script>
+
+</body>
+</html>
