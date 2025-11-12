@@ -299,6 +299,7 @@
         focus.forEach(a => {
           const card = document.createElement('div');
           card.className = 'assignment-card';
+          card.style.cursor = 'pointer'; // shows hand on hover 👆
 
           const content = document.createElement('div');
           content.className = 'card-content';
@@ -321,7 +322,13 @@
 
           card.appendChild(content);
           card.appendChild(subject);
-          focusList.appendChild(card);
+
+          // 👇 ADD THIS to go to assignments page
+          card.addEventListener('click', () => {
+          window.location.href = 'notes.html';
+        });
+
+  focusList.appendChild(card);
         });
 
       } catch(err) {
