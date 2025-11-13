@@ -454,25 +454,52 @@
   ];
   const schedules = { mon: standardSchedule, tue: standardSchedule, wed: wednesdaySchedule, thu: standardSchedule, fri: standardSchedule };
 
-  function showSchedule(day) {
-    document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
-    const clickedBtn = document.querySelector(`.day-btn[onclick="showSchedule('${day}')"]`);
-    if (clickedBtn) clickedBtn.classList.add("active");
+// --- Schedule Fix ---
+const dayButtons = document.querySelectorAll(".day-btn");
+const dayNames = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
-    const scheduleDiv = document.getElementById("schedule");
-    scheduleDiv.innerHTML = "";
+function showSchedule(day) {
+  // Remove active class from all buttons
+  dayButtons.forEach(btn => btn.classList.remove("active"));
+  
+  // Find and activate the clicked button
+  const clickedBtn = Array.from(dayButtons).find(b => b.textContent.toLowerCase() === day.slice(0,3));
+  if (clickedBtn) clickedBtn.classList.add("active");
 
-    if (schedules[day]) {
-      schedules[day].forEach(cls => {
-        const div = document.createElement("div");
-        div.classList.add("class-card");
-        if (cls.name === "Access") div.classList.add("access");
-        div.innerHTML = `<div class="class-title">${cls.name}</div><div class="class-time">${cls.time}</div>`;
-        scheduleDiv.appendChild(div);
-      });
-    }
+  // Render the schedule
+  const scheduleDiv = document.getElementById("schedule");
+  scheduleDiv.innerHTML = "";
+
+  if (schedules[day]) {
+    schedules[day].forEach(cls => {
+      const div = document.createElement("div");
+      div.classList.add("class-card");
+      if (cls.name === "Access") div.classList.add("access");
+      div.innerHTML = `
+        <div class="class-title">${cls.name}</div>
+        <div class="class-time">${cls.time}</div>
+      `;
+      scheduleDiv.appendChild(div);
+    });
   }
-  showSchedule("mon");
+}
+
+// Bind click events dynamically
+dayButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const day = btn.textContent.toLowerCase();
+    showSchedule(day);
+  });
+});
+
+// --- Auto-show current weekday ---
+const todayIndex = new Date().getDay(); // 0 = Sun, 1 = Mon, etc.
+const todayDay = dayNames[todayIndex];
+
+// If it's Saturday or Sunday, default to Monday
+const startDay = ["sat", "sun"].includes(todayDay) ? "mon" : todayDay;
+
+showSchedule(startDay);
 
   // --- Calendar ---
   const calendar = document.getElementById("calendar");
