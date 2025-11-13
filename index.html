@@ -58,9 +58,23 @@
     .notification { position: fixed; top: -80px; left: 50%; transform: translateX(-50%); background-color: gold; color: black; padding: 15px 30px; border-radius: 15px; font-weight: bold; font-family: 'Bruno Ace', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 999; transition: top 0.5s ease, opacity 0.5s ease; opacity: 0; }
     .notification.show { top: 20px; opacity: 1; }
     .notification.hide { top: -80px; opacity: 0; }
+
+    .version {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      color: #888888;        /* gray text */
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 20px;       /* slightly smaller for subtlety */
+      font-weight: 400;      /* light/normal weight */
+      letter-spacing: 0.5px; /* tiny spacing for clean look */
+     }
+
   </style>
 </head>
+
 <body>
+<div class="version">v1.0.1</div>
 
 <div class="login-container">
   <h1>Login</h1>
