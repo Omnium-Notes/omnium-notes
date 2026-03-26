@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Settings</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    background-color: black;
+    transition: background-color 0.5s ease;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  .menu-box {
+    padding: 12px 8px;
+    height: 100vh;
+    width: 64px;
+    background-color: #111;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .menu-box.expanded {
+    width: 220px;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: rgba(255,255,255,0.6);
+    transition: background 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    min-height: 48px;
+    position: relative;
+  }
+
+  .menu-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: white;
+  }
+
+  .menu-item.active {
+    color: white;
+  }
+
+  .menu-item.active::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 28px;
+    width: 3px;
+    background-color: white;
+    border-radius: 2px;
+  }
+
+  .menu-toggle {
+    margin-bottom: 16px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 28px;
+    flex-shrink: 0;
+    font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .menu-item.active .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .label {
+    font-family: "DM Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition-delay: 0s;
+    pointer-events: none;
+  }
+
+  .menu-box.expanded .label {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: 0.18s;
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 8px 8px;
+    flex-shrink: 0;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  /* ── Main content ── */
+  .main-content {
+    margin-left: 64px;
+    flex: 1;
+    width: calc(100% - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+
+  h1 {
+    color: #FFD54A;
+    font-family: 'Bruno Ace', cursive;
+    transition: color 0.5s ease;
+    font-size: 2em;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-right: 0;
+    align-self: flex-start;
+  }
+
+  .card {
+    background: #222;
+    border-radius: 15px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    margin-top: 12px;
+    position: relative;
+    width: 96%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card1 {
+    background: black;
+    border: 5px solid #B90101;
+    border-radius: 15px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    margin-top: 12px;
+    position: relative;
+    width: 96%;
+    height: 59px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h2 {
+    color: white;
+    font-family: 'Bruno Ace', cursive;
+    text-align: center;
+    margin: 0;
+    font-size: 30px;
+  }
+
+  .logout {
+    color: #B90101;
+    font-family: 'Bruno Ace', cursive;
+    text-align: center;
+    margin: 0;
+    font-size: 30px;
+  }
+
+  a.card-link {
+    text-decoration: none;
+    display: block;
+    width: 98%;
+    margin: 1px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="menu-box" id="box">
+    <div class="menu-item menu-toggle" id="menu-toggle">
+      <span class="material-symbols-outlined">menu</span>
+      <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
+    </div>
+
+    <a href="homepage.html" class="menu-item">
+      <span class="material-symbols-outlined">home</span>
+      <span class="label">Home</span>
+    </a>
+
+    <a href="calendar.html" class="menu-item">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span class="label">Calendar</span>
+    </a>
+
+    <a href="notes.html" class="menu-item">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="label">Assignments</span>
+    </a>
+
+    <a href="clock.html" class="menu-item">
+      <span class="material-symbols-outlined">timer</span>
+      <span class="label">Timer</span>
+    </a>
+
+    <div class="spacer"></div>
+    <div class="divider"></div>
+
+    <a href="settings.html" class="menu-item active">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="label">Settings</span>
+    </a>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content" id="main-content">
+    <a class="card-link" href="editprofile.html"><div class="card">
+      <h2>Edit Profile</h2>
+    </div></a>
+
+    <a class="card-link" href="customization.html"><div class="card">
+      <h2>Customization</h2>
+    </div></a>
+
+    <a class="card-link" href="notification.html"><div class="card">
+      <h2>Notifications</h2>
+    </div></a>
+
+    <a class="card-link" href="privacy.html"><div class="card">
+      <h2>Privacy</h2>
+    </div></a>
+
+    <a class="card-link" href="index.html"><div class="card1">
+      <h2 class="logout">Log Out</h2>
+    </div></a>
+  </div>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const box = document.getElementById("box");
+
+  toggle.addEventListener("click", () => {
+    box.classList.toggle("expanded");
+  });
+</script>
+</body>
+</html>
