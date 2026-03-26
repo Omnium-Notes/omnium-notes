@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Pomodoro Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #000;
@@ -14,24 +16,109 @@
   --glass: rgba(255,255,255,0.03);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   margin: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: row;
   background: var(--bg);
   color: #e6eef6;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  padding: 24px 0 72px 0;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.menu-box {
+  padding: 12px 8px;
+  height: 100vh;
+  width: 64px;
+  background-color: #111;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+}
+.menu-box.expanded { width: 220px; }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: rgba(255,255,255,0.6);
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  min-height: 48px;
+  position: relative;
+  flex-shrink: 0;
+}
+.menu-item:hover { background: rgba(255,255,255,0.07); color: white; }
+.menu-item.active { color: white; }
+.menu-item.active::before {
+  content: "";
+  position: absolute;
+  left: -8px; top: 50%;
+  transform: translateY(-50%);
+  height: 28px; width: 3px;
+  background-color: white;
+  border-radius: 2px;
+}
+.menu-toggle { margin-bottom: 16px; }
+
+.menu-box .material-symbols-outlined {
+  font-size: 28px;
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+}
+.menu-box .menu-item.active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition-delay: 0s;
+  pointer-events: none;
+}
+.menu-box.expanded .label {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.18s;
+}
+
+.nav-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 8px;
+  flex-shrink: 0;
+}
+.spacer { flex: 1; }
+
+/* ── MAIN CONTENT ── */
+.main-content {
+  margin-left: 64px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 0 48px 0;
   min-height: 100vh;
 }
 
@@ -176,113 +263,100 @@ button.secondary {
   color: var(--muted);
 }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #111;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 12px 0;
-  border-top: 1px solid #333;
-}
-
-.bottom-nav a {
-  position: relative;
-  text-decoration: none;
-  color: #aaa;
-  font-size: 28px;
-  flex: 1;
-  text-align: center;
-}
-
-.bottom-nav a.active::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 55px;
-  height: 55px;
-  background: #363636ff;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-}
-
-.bottom-nav a.active {
-  color: #FFD54A;
-}
-
 @media (max-width: 600px) {
   .card {
     width: 90%;
     height: calc(100vh - 100px);
     padding: 36px 24px;
   }
-
-  .big-time {
-    font-size: 64px;
-  }
-
-  h1 {
-    font-size: 26px;
-  }
-
-  button {
-    font-size: 16px;
-  }
+  .big-time { font-size: 64px; }
+  h1 { font-size: 26px; }
+  button { font-size: 16px; }
 }
-
 </style>
 </head>
 <body>
 
-<div class="card" role="application" aria-label="Pomodoro timer">
-  <h1>Pomodoro Timer</h1>
-  <p class="lead">Focus sessions + short breaks. Adjust lengths, then Start.</p>
-
-  <div class="timer-display">
-    <div class="big-time" id="timeDisplay">25:00</div>
-    <div class="session" id="sessionLabel">WORK</div>
+<!-- ── SIDEBAR NAV ── -->
+<div class="menu-box" id="menu-box">
+  <div class="menu-item menu-toggle" id="menu-toggle">
+    <span class="material-symbols-outlined">menu</span>
+    <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
   </div>
 
-  <div class="controls">
-    <button id="startBtn" class="primary">Start</button>
-    <button id="pauseBtn" class="secondary">Pause</button>
-    <button id="resetBtn">Reset</button>
-  </div>
+  <a href="homepage.html" class="menu-item">
+    <span class="material-symbols-outlined">home</span>
+    <span class="label">Home</span>
+  </a>
 
-  <div class="settings">
-    <div class="setting">
-      <label for="workInput">Work (minutes)</label>
-      <input id="workInput" type="number" min="1" max="180" value="25" />
+  <a href="calendar.html" class="menu-item">
+    <span class="material-symbols-outlined">calendar_month</span>
+    <span class="label">Calendar</span>
+  </a>
+
+  <a href="notes.html" class="menu-item">
+    <span class="material-symbols-outlined">assignment</span>
+    <span class="label">Assignments</span>
+  </a>
+
+  <a href="clock.html" class="menu-item active">
+    <span class="material-symbols-outlined">timer</span>
+    <span class="label">Timer</span>
+  </a>
+
+  <div class="spacer"></div>
+  <div class="nav-divider"></div>
+
+  <a href="settings.html" class="menu-item">
+    <span class="material-symbols-outlined">settings</span>
+    <span class="label">Settings</span>
+  </a>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="main-content">
+  <div class="card" role="application" aria-label="Pomodoro timer">
+    <h1>Pomodoro Timer</h1>
+    <p class="lead">Focus sessions + short breaks. Adjust lengths, then Start.</p>
+
+    <div class="timer-display">
+      <div class="big-time" id="timeDisplay">25:00</div>
+      <div class="session" id="sessionLabel">WORK</div>
     </div>
-    <div class="setting">
-      <label for="breakInput">Break (minutes)</label>
-      <input id="breakInput" type="number" min="1" max="60" value="5" />
+
+    <div class="controls">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="pauseBtn" class="secondary">Pause</button>
+      <button id="resetBtn">Reset</button>
     </div>
-  </div>
 
-  <div class="progress-wrap">
-    <div id="progressBar" class="progress"></div>
-  </div>
+    <div class="settings">
+      <div class="setting">
+        <label for="workInput">Work (minutes)</label>
+        <input id="workInput" type="number" min="1" max="180" value="25" />
+      </div>
+      <div class="setting">
+        <label for="breakInput">Break (minutes)</label>
+        <input id="breakInput" type="number" min="1" max="60" value="5" />
+      </div>
+    </div>
 
-  <div class="footer">
-    <div class="small" id="cycles">Sessions completed: 0</div>
-    <div class="small">Auto-switch: <strong id="autoSwitch">On</strong></div>
+    <div class="progress-wrap">
+      <div id="progressBar" class="progress"></div>
+    </div>
+
+    <div class="footer">
+      <div class="small" id="cycles">Sessions completed: 0</div>
+      <div class="small">Auto-switch: <strong id="autoSwitch">On</strong></div>
+    </div>
   </div>
 </div>
 
-<div class="bottom-nav">
-  <a href="homepage.html">🏠</a>
-  <a href="calendar.html">📅</a>
-  <a href="notes.html">📝</a>
-  <a href="clock.html" class="active">⏰</a>
-  <a href="profile.html">👤</a>
-</div>
+<script>
+  document.getElementById('menu-toggle').addEventListener('click', () => {
+    document.getElementById('menu-box').classList.toggle('expanded');
+  });
+</script>
 
 <script>
 (() => {
@@ -300,7 +374,6 @@ button.secondary {
   const progressBar = document.getElementById('progressBar');
   const cyclesEl = document.getElementById('cycles');
 
-  // state
   let workSeconds = 0;
   let breakSeconds = 0;
   let remaining = 0;
@@ -327,7 +400,6 @@ button.secondary {
     pauseBtn.disabled = !running || paused;
   }
 
-  // Per-user daily log
   function recordSessionTime(sessionMode, minutes){
     const today = new Date().toLocaleDateString();
     let dailyLog = JSON.parse(localStorage.getItem(dailyLogKey)) || {};
@@ -350,9 +422,7 @@ button.secondary {
     localStorage.setItem(timerStateKey, JSON.stringify(payload));
   }
 
-  function clearTimerState(){
-    localStorage.removeItem(timerStateKey);
-  }
+  function clearTimerState(){ localStorage.removeItem(timerStateKey); }
 
   function finishSessionActions(){
     const completedMinutes = (mode === 'work' ? workSeconds : breakSeconds) / 60;
@@ -370,12 +440,8 @@ button.secondary {
 
   function tick(){
     remaining -= 1;
-    if(remaining <= 0){
-      playBeep();
-      switchMode();
-    } else {
-      saveTimerState();
-    }
+    if(remaining <= 0){ playBeep(); switchMode(); }
+    else saveTimerState();
     updateUI();
   }
 
@@ -384,20 +450,16 @@ button.secondary {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const o = ctx.createOscillator();
       const g = ctx.createGain();
-      o.type='sine';
-      o.frequency.value=880;
-      o.connect(g);
-      g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=880;
+      o.connect(g); g.connect(ctx.destination);
       g.gain.setValueAtTime(0.08, ctx.currentTime);
-      o.start();
-      o.stop(ctx.currentTime + 0.25);
+      o.start(); o.stop(ctx.currentTime + 0.25);
     }catch(e){}
   }
 
-  function startTimer(resume=false){
+  function startTimer(){
     if(running && !paused) return;
-    running = true;
-    paused = false;
+    running = true; paused = false;
     saveTimerState();
     clearInterval(timerInterval);
     timerInterval = setInterval(tick, 1000);
@@ -405,55 +467,37 @@ button.secondary {
   }
 
   function pauseTimer(){
-    paused = true;
-    running = false;
+    paused = true; running = false;
     clearInterval(timerInterval);
-    saveTimerState();
-    updateUI();
+    saveTimerState(); updateUI();
   }
 
   function resetTimer(){
-    paused = false;
-    running = false;
+    paused = false; running = false;
     clearInterval(timerInterval);
     workSeconds = parseInt(workInput.value,10) * 60;
     breakSeconds = parseInt(breakInput.value,10) * 60;
-    mode = 'work';
-    remaining = workSeconds;
+    mode = 'work'; remaining = workSeconds;
     sessionsCompleted = 0;
-    clearTimerState();
-    updateUI();
+    clearTimerState(); updateUI();
   }
 
   function loadTimerState(){
     workSeconds = parseInt(workInput.value, 10) * 60;
     breakSeconds = parseInt(breakInput.value, 10) * 60;
-
     const saved = localStorage.getItem(timerStateKey);
-    if(!saved){
-      remaining = workSeconds;
-      mode = 'work';
-      running = false;
-      paused = false;
-      sessionsCompleted = 0;
-      updateUI();
-      return;
-    }
-
+    if(!saved){ remaining = workSeconds; mode = 'work'; running = false; paused = false; sessionsCompleted = 0; updateUI(); return; }
     const state = JSON.parse(saved);
     if(state.workInput) workInput.value = state.workInput;
     if(state.breakInput) breakInput.value = state.breakInput;
     workSeconds = parseInt(workInput.value, 10) * 60;
     breakSeconds = parseInt(breakInput.value, 10) * 60;
-
     mode = state.mode || 'work';
     sessionsCompleted = state.sessionsCompleted || 0;
     paused = !!state.paused;
     const wasRunning = !!state.running;
-
     const now = Date.now();
     const elapsed = Math.floor((now - (state.timestamp || now))/1000);
-
     if(wasRunning && !paused){
       let newRemaining = (typeof state.remaining === 'number'? state.remaining : (mode==='work'? workSeconds : breakSeconds)) - elapsed;
       while(newRemaining <= 0){
@@ -464,35 +508,26 @@ button.secondary {
         newRemaining += (mode==='work'? workSeconds : breakSeconds);
       }
       remaining = newRemaining;
-      running = true;
-      paused = false;
+      running = true; paused = false;
       clearInterval(timerInterval);
       timerInterval = setInterval(tick, 1000);
-      saveTimerState();
-      updateUI();
+      saveTimerState(); updateUI();
     } else {
       remaining = (typeof state.remaining === 'number') ? state.remaining : (mode==='work'? workSeconds : breakSeconds);
-      running = false;
-      updateUI();
+      running = false; updateUI();
     }
   }
 
   document.addEventListener('visibilitychange', () => {
-    if(document.hidden){
-      saveTimerState();
-    } else {
-      loadTimerState();
-    }
+    if(document.hidden) saveTimerState();
+    else loadTimerState();
   });
 
   startBtn.addEventListener('click', () => {
     workSeconds = parseInt(workInput.value,10) * 60;
     breakSeconds = parseInt(breakInput.value,10) * 60;
     if(!running || paused){
-      if(!remaining || remaining <= 0){
-        remaining = workSeconds;
-        mode = 'work';
-      }
+      if(!remaining || remaining <= 0){ remaining = workSeconds; mode = 'work'; }
       startTimer();
     }
   });
@@ -505,9 +540,7 @@ button.secondary {
   loadTimerState();
   updateUI();
 })();
-
 </script>
-
 
 </body>
 </html>
