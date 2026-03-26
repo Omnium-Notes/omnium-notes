@@ -5,31 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Today's Focus</title>
 
-  <!-- Bruno Ace font -->
   <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
-  <!-- Chart.js and Moment.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       margin: 0;
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      padding-bottom: 80px;
+      display: flex;
+      min-height: 100vh;
     }
 
-    /* Chart Styles */
+    /* ── SIDEBAR ── */
+    .menu-box {
+      padding: 12px 8px;
+      height: 100vh;
+      width: 64px;
+      background-color: #111;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: hidden;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 200;
+    }
+    .menu-box.expanded { width: 220px; }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: rgba(255,255,255,0.6);
+      transition: background 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+      min-height: 48px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .menu-item:hover { background: rgba(255,255,255,0.07); color: white; }
+    .menu-item.active { color: white; }
+    .menu-item.active::before {
+      content: "";
+      position: absolute;
+      left: -8px; top: 50%;
+      transform: translateY(-50%);
+      height: 28px; width: 3px;
+      background-color: white;
+      border-radius: 2px;
+    }
+    .menu-toggle { margin-bottom: 16px; }
+
+    .menu-box .material-symbols-outlined {
+      font-size: 28px;
+      flex-shrink: 0;
+      font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+    }
+    .menu-box .menu-item.active .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .label {
+      font-family: "DM Sans", sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition-delay: 0s;
+      pointer-events: none;
+    }
+    .menu-box.expanded .label {
+      opacity: 1;
+      transform: translateX(0);
+      transition-delay: 0.18s;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 8px;
+      flex-shrink: 0;
+    }
+    .spacer { flex: 1; }
+
+    /* ── MAIN CONTENT ── */
+    .main-content {
+      margin-left: 64px;
+      flex: 1;
+      padding-bottom: 40px;
+    }
+
+    /* ── CHART ── */
     .chart-container {
       width: 100%;
       max-width: 800px;
       padding: 20px;
-      background-color: #2d2d2dff;
+      background-color: #2d2d2d;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin: 20px auto 0;
     }
 
@@ -39,7 +128,7 @@
       margin-bottom: 20px;
     }
 
-    /* Today's Focus Styles */
+    /* ── TODAY'S FOCUS ── */
     h2 {
       margin: 20px 15px 10px;
       font-size: 26px;
@@ -48,11 +137,8 @@
       color: #FFD54A;
     }
 
-    #focusList {
-      padding: 10px 15px;
-    }
+    #focusList { padding: 10px 15px; }
 
-    /* Assignment Cards (for Today's Focus) */
     .assignment-card {
       background: #222;
       border-radius: 12px;
@@ -64,10 +150,7 @@
       gap: 10px;
       transition: transform 0.2s;
     }
-
-    .assignment-card:hover {
-      transform: scale(1.012);
-    }
+    .assignment-card:hover { transform: scale(1.012); }
 
     .card-content {
       display: flex;
@@ -75,18 +158,9 @@
       font-family: 'Bruno Ace', cursive;
       color: white;
     }
+    .assignment-title { font-size: 16px; font-weight: bold; }
+    .assignment-due   { font-size: 14px; color: #ccc; }
 
-    .assignment-title {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .assignment-due {
-      font-size: 14px;
-      color: #ccc;
-    }
-
-    /* Subject Colors */
     .subject-tag {
       padding: 6px 10px;
       border-radius: 8px;
@@ -94,76 +168,64 @@
       white-space: nowrap;
       color: white;
     }
-
-    .subject-math { background-color: #d50000; color: white; }
-    .subject-science { background-color: #4285f4; color: white; }
-    .subject-english { background-color: #0dd000; color: black; }
-    .subject-history { background-color: #ffd54a; color: black; }
+    .subject-math      { background-color: #d50000; color: white; }
+    .subject-science   { background-color: #4285f4; color: white; }
+    .subject-english   { background-color: #0dd000; color: black; }
+    .subject-history   { background-color: #ffd54a; color: black; }
     .subject-orchestra { background-color: #7e00d2; color: white; }
-    .subject-spanish { background-color: #ff9900; color: black; }
-
-    /* Bottom Navigation */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #111;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 12px 0;
-      border-top: 1px solid #333;
-    }
-
-    .bottom-nav a {
-      position: relative;
-      text-decoration: none;
-      color: #aaa;
-      font-size: 28px;
-      flex: 1;
-      text-align: center;
-    }
-
-    .bottom-nav a.active::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 55px;
-      height: 55px;
-      background: #363636ff;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-    }
-
-    .bottom-nav a.active {
-      color: #FFD54A;
-    }
+    .subject-spanish   { background-color: #ff9900; color: black; }
   </style>
 </head>
 
 <body>
 
-  <!-- Chart Section -->
-  <div class="chart-container">
-    <h1>This Week’s Productivity</h1>
-    <canvas id="dailyTimeChart"></canvas>
+  <!-- SIDEBAR NAV -->
+  <div class="menu-box" id="menu-box">
+    <div class="menu-item menu-toggle" id="menu-toggle">
+      <span class="material-symbols-outlined">menu</span>
+      <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
+    </div>
+
+    <a href="homepage.html" class="menu-item active">
+      <span class="material-symbols-outlined">home</span>
+      <span class="label">Home</span>
+    </a>
+
+    <a href="calendar.html" class="menu-item">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span class="label">Calendar</span>
+    </a>
+
+    <a href="notes.html" class="menu-item">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="label">Assignments</span>
+    </a>
+
+    <a href="clock.html" class="menu-item">
+      <span class="material-symbols-outlined">timer</span>
+      <span class="label">Timer</span>
+    </a>
+
+    <div class="spacer"></div>
+    <div class="nav-divider"></div>
+
+    <a href="settings.html" class="menu-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="label">Settings</span>
+    </a>
   </div>
 
-  <!-- Today's Focus Section -->
-  <h2>🔥 Today's Focus</h2>
-  <div id="focusList"></div>
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
 
-  <!-- Bottom Navigation -->
-  <div class="bottom-nav">
-    <a href="homepage.html" class="active">🏠</a>
-    <a href="calendar.html">📅</a>
-    <a href="notes.html">📝</a>
-    <a href="clock.html">⏰</a>
-    <a href="profile.html">👤</a>
+    <div class="chart-container">
+      <h1>This Week's Productivity</h1>
+      <canvas id="dailyTimeChart"></canvas>
+    </div>
+
+    <h2>🔥 Today's Focus</h2>
+    <div id="focusList"></div>
+
   </div>
 
   <script type="module">
@@ -181,11 +243,16 @@
       measurementId: "G-GWSKVGQP21"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
 
-    // ===== Chart Data =====
+    // ── Sidebar toggle ──
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      document.getElementById('menu-box').classList.toggle('expanded');
+    });
+
+    // ── Chart ──
     function getSevenDayData() {
       const dailyLog = JSON.parse(localStorage.getItem('pomodoroDailyLog')) || {};
       const sevenDays = [];
@@ -206,36 +273,22 @@
         workDataMap.set(dayLabel, { work: workHours.toFixed(1), break: breakHours.toFixed(1) });
       }
 
-      const workData = sevenDays.map(day => workDataMap.get(day).work);
+      const workData  = sevenDays.map(day => workDataMap.get(day).work);
       const breakData = sevenDays.map(day => workDataMap.get(day).break);
-      const chartMax = Math.ceil(maxTotalHours * 1.1) || 1;
-
+      const chartMax  = Math.ceil(maxTotalHours * 1.1) || 1;
       return { labels: sevenDays, workData, breakData, chartMax };
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const { labels, workData, breakData, chartMax } = getSevenDayData();
       const ctx = document.getElementById('dailyTimeChart').getContext('2d');
-
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: labels,
+          labels,
           datasets: [
-            {
-              label: 'Work Time',
-              data: workData,
-              backgroundColor: '#FAC903',
-              borderColor: '#FAC903',
-              borderWidth: 1
-            },
-            {
-              label: 'Break Time',
-              data: breakData,
-              backgroundColor: '#B90101',
-              borderColor: '#B90101',
-              borderWidth: 1
-            }
+            { label: 'Work Time',  data: workData,  backgroundColor: '#FAC903', borderColor: '#FAC903', borderWidth: 1 },
+            { label: 'Break Time', data: breakData, backgroundColor: '#B90101', borderColor: '#B90101', borderWidth: 1 }
           ]
         },
         options: {
@@ -250,11 +303,10 @@
       });
     });
 
-    // ===== Today’s Focus =====
+    // ── Today's Focus ──
     async function renderTodaysFocus() {
       const focusList = document.getElementById('focusList');
       if (!focusList) return;
-
       focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">Loading...</p>`;
 
       try {
@@ -262,8 +314,8 @@
         if (!user) { focusList.innerHTML = `<p style="color:red;">Not logged in</p>`; return; }
 
         const userDocRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userDocRef);
-        const data = userSnap.exists() ? userSnap.data() : {};
+        const userSnap   = await getDoc(userDocRef);
+        const data       = userSnap.exists() ? userSnap.data() : {};
         const assignments = data.assignments || [];
 
         if (assignments.length === 0) {
@@ -271,15 +323,13 @@
           return;
         }
 
-        // Filter high-priority incomplete
-        const focus = assignments.filter(a => a.priority === 'high' && !a.completed);
-
-        // Sort by due date
-        focus.sort((a,b) => {
-          if(!a.due) return 1;
-          if(!b.due) return -1;
-          return new Date(a.due)-new Date(b.due);
-        });
+        const focus = assignments
+          .filter(a => a.priority === 'high' && !a.completed)
+          .sort((a, b) => {
+            if (!a.due) return 1;
+            if (!b.due) return -1;
+            return new Date(a.due) - new Date(b.due);
+          });
 
         if (focus.length === 0) {
           focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">No high-priority tasks 🎉</p>`;
@@ -287,19 +337,15 @@
         }
 
         const subjectClasses = {
-          math: 'subject-math',
-          science: 'subject-science',
-          english: 'subject-english',
-          history: 'subject-history',
-          orchestra: 'subject-orchestra',
-          spanish: 'subject-spanish'
+          math: 'subject-math', science: 'subject-science', english: 'subject-english',
+          history: 'subject-history', orchestra: 'subject-orchestra', spanish: 'subject-spanish'
         };
 
         focusList.innerHTML = '';
         focus.forEach(a => {
           const card = document.createElement('div');
           card.className = 'assignment-card';
-          card.style.cursor = 'pointer'; // shows hand on hover 👆
+          card.style.cursor = 'pointer';
 
           const content = document.createElement('div');
           content.className = 'card-content';
@@ -315,33 +361,25 @@
           content.appendChild(title);
           content.appendChild(due);
 
-          const subject = document.createElement('div');
+          const subject  = document.createElement('div');
           const subjName = a.subject ? a.subject.toLowerCase() : 'math';
           subject.textContent = subjName.charAt(0).toUpperCase() + subjName.slice(1);
-          subject.className = 'subject-tag ' + (subjectClasses[subjName] || 'subject-math');
+          subject.className   = 'subject-tag ' + (subjectClasses[subjName] || 'subject-math');
 
           card.appendChild(content);
           card.appendChild(subject);
-
-          // 👇 ADD THIS to go to assignments page
-          card.addEventListener('click', () => {
-          window.location.href = 'notes.html';
-        });
-
-  focusList.appendChild(card);
+          card.addEventListener('click', () => { window.location.href = 'notes.html'; });
+          focusList.appendChild(card);
         });
 
       } catch(err) {
-        console.error('Error loading Today’s Focus:', err);
+        console.error('Error loading Today\'s Focus:', err);
         focusList.innerHTML = `<p style="color:red; padding:0 12px;">Error loading tasks</p>`;
       }
     }
 
     onAuthStateChanged(auth, user => {
-      if (!user) {
-        window.location.href = "index.html";
-        return;
-      }
+      if (!user) { window.location.href = "index.html"; return; }
       renderTodaysFocus();
     });
   </script>
