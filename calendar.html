@@ -456,6 +456,45 @@
     cursor: pointer; transition: background 0.15s;
   }
   .edit-cancel-btn:hover { background: var(--surface2); }
+
+  /* ── ASSIGNMENT BANNERS (from assignments page) ── */
+  .assignment-banners {
+    padding: 8px 12px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .assignment-banners:empty { display: none; }
+  .assignment-banner {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px dashed;
+    cursor: default;
+  }
+  .assignment-banner .banner-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .assignment-banner .banner-subject {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-left: auto;
+  }
+  .assignment-banner.completed-banner {
+    opacity: 0.4;
+    text-decoration: line-through;
+  }
 </style>
 </head>
 <body>
@@ -515,6 +554,7 @@
         <div class="day-panel-month" id="dayMonth"></div>
         <button class="day-add-btn" id="addEventBtn">+ Add Event</button>
       </div>
+      <div class="assignment-banners" id="assignmentBanners"></div>
       <div class="day-scroll" id="dayScroll">
         <div class="time-grid" id="timeGrid"></div>
       </div>
@@ -641,6 +681,7 @@
   function openEditModal(key, index, e) {
     if (e) e.stopPropagation(); // don't bubble to the cell click
     const ev = events[key][index];
+    if (ev.fromAssignment) return; // assignment events are managed from the assignments page
     editTarget = { key, index };
 
     document.getElementById('editTitle').value = ev.title;
@@ -741,10 +782,16 @@
         events[key].slice(0,2).forEach((ev, idx) => {
           const p = document.createElement('div');
           p.className    = 'cal-event-pill';
-          p.style.cssText = `background:${ev.color}1a;color:${ev.color};`;
+          const pillColor = ev.fromAssignment
+            ? (SUBJECT_COLORS[ev.subject] || '#aaaaaa')
+            : ev.color;
+          p.style.cssText = ev.fromAssignment
+            ? `background:${pillColor}18;color:${pillColor};border-left:2px dashed ${pillColor};padding-left:4px;opacity:${ev.completed?0.45:1};`
+            : `background:${pillColor}1a;color:${pillColor};`;
           p.textContent  = ev.title;
-          // clicking a pill opens the edit modal for that event
-          p.addEventListener('click', e => openEditModal(key, idx, e));
+          if (!ev.fromAssignment) {
+            p.addEventListener('click', e => openEditModal(key, idx, e));
+          }
           evDiv.appendChild(p);
         });
         if (events[key].length > 2) {
@@ -767,6 +814,12 @@
   }
 
   // ── Day panel ──
+  // Subject colour map (matches assignments page)
+  const SUBJECT_COLORS = {
+    math: '#d50000', science: '#4285f4', english: '#0dd000',
+    history: '#ffd54a', orchestra: '#7e00d2', spanish: '#ff9900'
+  };
+
   function renderDayPanel() {
     const isToday = isSameDay(selectedDate, today);
     document.getElementById('dayWeekday').textContent =
@@ -776,7 +829,28 @@
     el.className   = 'day-panel-date' + (isToday ? ' is-today' : '');
     document.getElementById('dayMonth').textContent =
       `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
+    renderAssignmentBanners();
     renderTimeGrid();
+  }
+
+  function renderAssignmentBanners() {
+    const container = document.getElementById('assignmentBanners');
+    container.innerHTML = '';
+    const key = dateKey(selectedDate);
+    const dayEvents = events[key] || [];
+    const assignmentEvents = dayEvents.filter(ev => ev.fromAssignment);
+    assignmentEvents.forEach(ev => {
+      const color = SUBJECT_COLORS[ev.subject] || '#aaaaaa';
+      const banner = document.createElement('div');
+      banner.className = 'assignment-banner' + (ev.completed ? ' completed-banner' : '');
+      banner.style.cssText = `border-color:${color}66;background:${color}11;color:${color};`;
+      banner.innerHTML = `
+        <div class="banner-dot" style="background:${color}"></div>
+        <span>${ev.title}</span>
+        <span class="banner-subject">${ev.subject || ''}</span>
+      `;
+      container.appendChild(banner);
+    });
   }
 
   // ── Time grid ──
@@ -806,6 +880,7 @@
 
     const key = dateKey(selectedDate);
     (events[key] || []).forEach((ev, idx) => {
+      if (ev.fromAssignment) return; // shown as banners above, not on time grid
       const el = document.createElement('div');
       el.className    = 'timed-event';
       el.style.cssText = `top:${timeToMins(ev.start)/60*CELL_H}px;height:${Math.max((timeToMins(ev.end)-timeToMins(ev.start))/60*CELL_H,22)}px;background:${ev.color}14;border-left-color:${ev.color};color:${ev.color};`;
