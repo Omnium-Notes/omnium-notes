@@ -590,7 +590,7 @@
 <script type="module">
   import { initializeApp }             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
@@ -631,7 +631,10 @@
   const timeToMins = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
 
   async function saveEvents() {
-    if (userDocRef) await setDoc(userDocRef, { calendarEvents: events }, { merge: true });
+    if (!userDocRef) return;
+    // Delete the field first so removed date keys are truly gone, then rewrite
+    await updateDoc(userDocRef, { calendarEvents: deleteField() });
+    await setDoc(userDocRef, { calendarEvents: events }, { merge: true });
   }
 
   // ── Open the edit modal for a specific event ──
