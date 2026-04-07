@@ -15,7 +15,7 @@
       font-family: "Inter", sans-serif; min-height: 100vh; overflow-x: hidden;
     }
 
-    /* ── SIDEBAR ── */
+    /* ── SIDEBAR (desktop only) ── */
     .menu-box {
       padding: 12px 8px; height: 100vh; width: 64px;
       background-color: #111;
@@ -55,6 +55,32 @@
     .menu-box.expanded .label { opacity: 1; transform: translateX(0); transition-delay: 0.18s; }
     .nav-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 8px; flex-shrink: 0; }
     .spacer { flex: 1; }
+
+    /* ── BOTTOM NAV (mobile only) ── */
+    .bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: #111; border-top: 1px solid rgba(255,255,255,0.08);
+      height: 64px; padding-bottom: env(safe-area-inset-bottom);
+    }
+    .bottom-nav-inner {
+      display: flex; align-items: center; justify-content: space-around;
+      height: 64px;
+    }
+    .bottom-nav-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
+      font-size: 10px; font-family: "DM Sans", sans-serif; padding: 8px 0;
+      transition: color 0.2s ease; cursor: pointer;
+    }
+    .bottom-nav-item.active { color: white; }
+    .bottom-nav-item .material-symbols-outlined {
+      font-size: 24px;
+      font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+    }
+    .bottom-nav-item.active .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
 
     /* ── MAIN ── */
     .main-content { margin-left: 64px; min-height: 100vh; display: flex; flex-direction: column; }
@@ -104,51 +130,54 @@
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 12px; transition: transform 0.35s ease, opacity 0.35s ease; gap: 10px;
     }
-    .card-content { display: flex; flex-direction: column; flex-grow: 1; }
-    .assignment-title { font-size: 16px; font-weight: bold; }
+    .card-content { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; }
+    .assignment-title { font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .assignment-due   { font-size: 14px; color: #ccc; }
 
+    /* ── CHECKBOX — fully clickable including checkmark ── */
     .checkbox-wrapper {
-      position: relative; width: 30px; height: 30px;
-      margin-right: 20px; display: flex; align-items: center; justify-content: center;
+      position: relative; width: 34px; height: 34px; flex-shrink: 0;
+      margin-right: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
-    .complete-checkbox { opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer; }
-    .checkbox-wrapper::before {
-      content: ''; position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%); width: 25px; height: 25px;
-      border-radius: 5px; background: #222; border: 2px solid white;
+    .checkbox-wrapper .cb-box {
+      width: 25px; height: 25px; border-radius: 5px;
+      background: #222; border: 2px solid white;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      pointer-events: none;
     }
-    .checkbox-wrapper.checked-js::before { background: #4CAF50; border-color: #4CAF50; }
-    .checkbox-wrapper.checked-js::after  { 
-      content: '✓'; 
-      color: white; 
-      font-size: 18px; 
-      font-weight: bold;
-      position: absolute;
-      top: 50%;
-      left: 46%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
+    .checkbox-wrapper.checked-js .cb-box {
+      background: #4CAF50; border-color: #4CAF50;
     }
+    .checkbox-wrapper .cb-check {
+      color: white; font-size: 16px; font-weight: bold; line-height: 1;
+      display: none; pointer-events: none;
+    }
+    .checkbox-wrapper.checked-js .cb-check { display: block; }
 
     .assignment-card.completed { opacity: 0.6; background: #111; }
     .assignment-card.completed .card-content { text-decoration: line-through; text-decoration-color: #B90101; }
 
     .priority-select {
-      background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 10px;
+      background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px;
+      font-size: 13px; flex-shrink: 0;
     }
     .priority-low    { border-color: #4CAF50; color: #4CAF50; }
     .priority-medium { border-color: #FFD54A; color: #FFD54A; }
     .priority-high   { border-color: #B90101; color: #B90101; }
 
     .edit-button {
-      background: none; border: none; cursor: pointer; padding: 5px;
+      background: none; border: none; cursor: pointer; padding: 5px; flex-shrink: 0;
       transition: transform 0.15s ease; display: flex; align-items: center; justify-content: center;
     }
-    .edit-button img { width: 40px; height: 40px; display: block; }
+    .edit-button img { width: 36px; height: 36px; display: block; }
     .edit-button:hover { transform: scale(1.08); }
 
-    .subject-select { background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 10px; }
+    .subject-select {
+      background: #111; color: white; border: 2px solid #555; border-radius: 8px;
+      padding: 6px 8px; font-size: 13px; flex-shrink: 0;
+    }
     .subject-math      { background-color: #d50000; border-color: #d50000; color: white; }
     .subject-science   { background-color: #4285f4; border-color: #4285f4; color: white; }
     .subject-english   { background-color: #0dd000; border-color: #0dd000; color: black; }
@@ -186,10 +215,10 @@
     }
     .modal-content input, .modal-content select {
       padding: 12px; border-radius: 10px; border: 2px solid #FFD54A;
-      background: #111; color: white;
+      background: #111; color: white; font-size: 16px;
     }
     .modal-buttons { display: flex; justify-content: space-between; gap: 10px; }
-    .modal-buttons button { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
+    .modal-buttons button { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 15px; }
     .modal-buttons button:first-child { background: #FFD54A; color: #000; }
     .modal-buttons button:last-child  { background: #B90101; color: white; }
 
@@ -205,15 +234,50 @@
     .flatpickr-day.selected { background: #B90101 !important; color: #FFD54A !important; }
     .flatpickr-day:hover { background: #FFD54A22 !important; color: #FFD54A !important; }
 
-    @media (max-width: 480px) {
-      .assignment-card { gap: 8px; padding: 10px; }
-      .edit-button img { width: 22px; height: 22px; }
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      /* hide sidebar, show bottom nav */
+      .menu-box { display: none; }
+      .bottom-nav { display: block; }
+      .main-content {
+        margin-left: 0;
+        padding-bottom: calc(64px + env(safe-area-inset-bottom));
+      }
+
+      .top-bar { padding: 14px 14px 0 14px; gap: 8px; }
+
+      .toggle-container .container { width: 80px; height: 40px; }
+      .toggle-container .circle { width: 32px; height: 32px; }
+      .toggle-container .material-symbols-outlined { font-size: 23px; }
+
+      .add-button { height: 40px; font-size: 14px; padding: 0 12px; }
+
+      .assignment-list { padding: 0 12px; }
+      .assignment-card { padding: 10px 10px; gap: 6px; border-radius: 10px; }
+
+      .assignment-title { font-size: 14px; }
+      .assignment-due   { font-size: 12px; }
+
+      .subject-select  { font-size: 11px; padding: 5px 5px; border-radius: 6px; border-width: 1.5px; max-width: 80px; }
+      .priority-select { font-size: 11px; padding: 5px 5px; border-radius: 6px; border-width: 1.5px; max-width: 68px; }
+
+      .edit-button img { width: 28px; height: 28px; }
+
+      .checkbox-wrapper { width: 30px; height: 30px; margin-right: 4px; }
+      .checkbox-wrapper .cb-box { width: 22px; height: 22px; }
+      .checkbox-wrapper .cb-check { font-size: 14px; }
+
+      .app-grid { gap: 8px; padding: 8px; margin-top: 20px; }
+      .app-grid button { font-size: 17px; border-radius: 16px; }
+
+      .modal-content { padding: 22px 18px; gap: 14px; }
+      .modal-content input, .modal-content select { padding: 10px; font-size: 15px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR ── -->
+<!-- ── SIDEBAR (desktop) ── -->
 <div class="menu-box" id="menu-box">
   <div class="menu-item menu-toggle" id="menu-toggle">
     <span class="material-symbols-outlined">menu</span>
@@ -242,6 +306,32 @@
     <span class="label">Settings</span>
   </a>
 </div>
+
+<!-- ── BOTTOM NAV (mobile) ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="homepage.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </a>
+    <a href="calendar.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span>Calendar</span>
+    </a>
+    <a href="notes.html" class="bottom-nav-item active">
+      <span class="material-symbols-outlined">assignment</span>
+      <span>Assignments</span>
+    </a>
+    <a href="clock.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">timer</span>
+      <span>Timer</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+  </div>
+</nav>
 
 <!-- ── MAIN CONTENT ── -->
 <div class="main-content">
@@ -323,23 +413,18 @@
   const db = getFirestore(app);
 
   let assignments = [];
-  let calendarEvents = {}; // kept in sync with Firestore calendarEvents field
+  let calendarEvents = {};
   let userDocRef = null;
   const list = document.getElementById('assignment-list');
   let editingAssignment = null;
 
-  // ── Month name → index map for parsing flatpickr's "MMM D, YYYY" format ──
   const MONTH_IDX = {
     Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,
     Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11
   };
 
-  /**
-   * Convert a flatpickr date string like "Apr 7, 2026" → "2026-04-07"
-   */
   function dueDateToKey(dateStr) {
     if (!dateStr) return null;
-    // Try to parse "MMM D, YYYY"
     const m = dateStr.match(/^(\w{3})\s+(\d{1,2}),\s+(\d{4})$/);
     if (!m) return null;
     const month = String(MONTH_IDX[m[1]] + 1).padStart(2, '0');
@@ -347,24 +432,17 @@
     return `${m[3]}-${month}-${day}`;
   }
 
-  // ── Save assignments to Firestore ──
   async function saveAssignments() {
     if (!userDocRef) return;
     await setDoc(userDocRef, { assignments }, { merge: true });
   }
 
-  // ── Rebuild calendarEvents from scratch based on current assignments,
-  //    preserving any non-assignment events that already exist ──
   async function syncCalendarEvents() {
     if (!userDocRef) return;
-
-    // Remove all existing fromAssignment entries
     Object.keys(calendarEvents).forEach(key => {
       calendarEvents[key] = (calendarEvents[key] || []).filter(ev => !ev.fromAssignment);
       if (calendarEvents[key].length === 0) delete calendarEvents[key];
     });
-
-    // Re-insert all current assignments
     assignments.forEach(a => {
       const key = dueDateToKey(a.due);
       if (!key) return;
@@ -376,16 +454,12 @@
         subject:        a.subject,
         priority:       a.priority,
         completed:      a.completed,
-        // No start/end — assignment events are all-day banners
       });
     });
-
-    // Full overwrite (delete then rewrite) to handle removals correctly
     await updateDoc(userDocRef, { calendarEvents: deleteField() });
     await setDoc(userDocRef, { calendarEvents }, { merge: true });
   }
 
-  // ── Load from Firestore on auth ──
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = "index.html"; return; }
     userDocRef = doc(db, "users", user.uid);
@@ -393,7 +467,6 @@
     const data = snap.exists() ? snap.data() : {};
     assignments     = data.assignments     || [];
     calendarEvents  = data.calendarEvents  || {};
-    // Ensure every assignment has a stable ID
     let needsSave = false;
     assignments.forEach(a => { if (!a.id) { a.id = crypto.randomUUID(); needsSave = true; } });
     if (needsSave) await saveAssignments();
@@ -504,14 +577,21 @@
     card.className = 'assignment-card';
     if (a.completed) card.classList.add('completed');
 
+    // ── Checkbox — entire div is the click target ──
     const cbWrap = document.createElement('div');
     cbWrap.className = 'checkbox-wrapper';
     if (a.completed) cbWrap.classList.add('checked-js');
 
-    const cb = document.createElement('input');
-    cb.type = 'checkbox'; cb.className = 'complete-checkbox'; cb.checked = a.completed;
-    cb.onchange = () => toggleCompleted(cb, a);
-    cbWrap.appendChild(cb);
+    const cbBox = document.createElement('div');
+    cbBox.className = 'cb-box';
+    const cbCheck = document.createElement('span');
+    cbCheck.className = 'cb-check';
+    cbCheck.textContent = '✓';
+    cbBox.appendChild(cbCheck);
+    cbWrap.appendChild(cbBox);
+
+    // Click anywhere on the wrapper toggles completion
+    cbWrap.addEventListener('click', () => toggleCompleted(cbWrap, a));
 
     const content = document.createElement('div');
     content.className = 'card-content';
@@ -564,13 +644,13 @@
     list.appendChild(card);
   }
 
-  async function toggleCompleted(cb, assignment) {
-    assignment.completed = cb.checked;
-    const card = cb.closest('.assignment-card');
-    card.classList.toggle('completed', cb.checked);
-    cb.closest('.checkbox-wrapper').classList.toggle('checked-js', cb.checked);
+  async function toggleCompleted(cbWrap, assignment) {
+    assignment.completed = !assignment.completed;
+    const card = cbWrap.closest('.assignment-card');
+    card.classList.toggle('completed', assignment.completed);
+    cbWrap.classList.toggle('checked-js', assignment.completed);
     await saveAssignments();
-    await syncCalendarEvents(); // update the completed flag in calendar too
+    await syncCalendarEvents();
     renderAssignments();
   }
 
@@ -628,7 +708,7 @@
   }
   toggleEl.addEventListener('click', togglePages);
 
-  // SIDEBAR TOGGLE
+  // SIDEBAR TOGGLE (desktop only)
   document.getElementById('menu-toggle').addEventListener('click', () => {
     document.getElementById('menu-box').classList.toggle('expanded');
   });
