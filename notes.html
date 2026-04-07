@@ -68,14 +68,14 @@
       height: 64px;
     }
     .bottom-nav-item {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 2px; flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
-      font-size: 10px; font-family: "DM Sans", sans-serif; padding: 8px 0;
-      transition: color 0.2s ease; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
+      padding: 8px 0; transition: color 0.2s ease; cursor: pointer;
     }
+    .bottom-nav-item span.label-text { display: none; }
     .bottom-nav-item.active { color: white; }
     .bottom-nav-item .material-symbols-outlined {
-      font-size: 24px;
+      font-size: 30px;
       font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
     }
     .bottom-nav-item.active .material-symbols-outlined {
@@ -312,23 +312,18 @@
   <div class="bottom-nav-inner">
     <a href="homepage.html" class="bottom-nav-item">
       <span class="material-symbols-outlined">home</span>
-      <span>Home</span>
     </a>
     <a href="calendar.html" class="bottom-nav-item">
       <span class="material-symbols-outlined">calendar_month</span>
-      <span>Calendar</span>
     </a>
     <a href="notes.html" class="bottom-nav-item active">
       <span class="material-symbols-outlined">assignment</span>
-      <span>Assignments</span>
     </a>
     <a href="clock.html" class="bottom-nav-item">
       <span class="material-symbols-outlined">timer</span>
-      <span>Timer</span>
     </a>
     <a href="settings.html" class="bottom-nav-item">
       <span class="material-symbols-outlined">settings</span>
-      <span>Settings</span>
     </a>
   </div>
 </nav>
