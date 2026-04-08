@@ -34,7 +34,7 @@
     overflow: hidden;
   }
 
-  /* ── SIDEBAR ── */
+  /* ── SIDEBAR (desktop) ── */
   .sidebar {
     padding: 12px 8px;
     height: 100vh;
@@ -103,6 +103,31 @@
 
   .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px; flex-shrink: 0; }
   .spacer { flex: 1; }
+
+  /* ── BOTTOM NAV (mobile) ── */
+  .bottom-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: #0d0d0d; border-top: 1px solid var(--border);
+    height: 64px; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav-inner {
+    display: flex; align-items: center; justify-content: space-around;
+    height: 64px;
+  }
+  .bottom-nav-item {
+    display: flex; align-items: center; justify-content: center;
+    flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
+    padding: 8px 0; transition: color 0.2s ease; cursor: pointer;
+  }
+  .bottom-nav-item.active { color: white; }
+  .bottom-nav-item .material-symbols-outlined {
+    font-size: 30px;
+    font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+  }
+  .bottom-nav-item.active .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
 
   /* ── MAIN ── */
   .main-wrap {
@@ -353,7 +378,7 @@
     width: 100%; padding: 8px 11px;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
-    font-family: 'Inter', sans-serif; font-size: 13px;
+    font-family: 'Inter', sans-serif; font-size: 16px;
     background: var(--surface2); color: var(--text-primary);
     outline: none; transition: border-color 0.15s;
   }
@@ -402,13 +427,7 @@
     margin-bottom: 18px;
   }
   .edit-modal-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
-
-  .edit-color-bar {
-    height: 3px;
-    border-radius: 2px;
-    margin-bottom: 18px;
-    transition: background 0.2s;
-  }
+  .edit-color-bar { height: 3px; border-radius: 2px; margin-bottom: 18px; transition: background 0.2s; }
 
   .edit-close-btn {
     width: 28px; height: 28px;
@@ -416,90 +435,116 @@
     border: 1px solid var(--border-light);
     border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    color: var(--text-muted);
-    font-size: 15px;
-    transition: background 0.15s, color 0.15s;
-    flex-shrink: 0;
+    cursor: pointer; color: var(--text-muted); font-size: 15px;
+    transition: background 0.15s, color 0.15s; flex-shrink: 0;
   }
   .edit-close-btn:hover { background: var(--border-light); color: var(--text-primary); }
 
-  .edit-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 18px;
-  }
+  .edit-actions { display: flex; gap: 8px; margin-top: 18px; }
   .edit-save-btn {
-    flex: 1; padding: 9px;
-    background: white; color: #111;
+    flex: 1; padding: 9px; background: white; color: #111;
     border: none; border-radius: var(--radius-sm);
     font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
     cursor: pointer; transition: opacity 0.15s;
   }
   .edit-save-btn:hover { opacity: 0.85; }
   .edit-delete-btn {
-    padding: 9px 14px;
-    background: transparent;
-    color: #e06060;
-    border: 1px solid #e0606044;
-    border-radius: var(--radius-sm);
+    padding: 9px 14px; background: transparent; color: #e06060;
+    border: 1px solid #e0606044; border-radius: var(--radius-sm);
     font-family: 'Inter', sans-serif; font-size: 13px;
     cursor: pointer; transition: background 0.15s, border-color 0.15s;
     display: flex; align-items: center; gap: 5px;
   }
   .edit-delete-btn:hover { background: rgba(224,96,96,0.1); border-color: #e06060; }
   .edit-cancel-btn {
-    padding: 9px 14px;
-    background: transparent; color: var(--text-secondary);
+    padding: 9px 14px; background: transparent; color: var(--text-secondary);
     border: 1px solid var(--border-light); border-radius: var(--radius-sm);
     font-family: 'Inter', sans-serif; font-size: 13px;
     cursor: pointer; transition: background 0.15s;
   }
   .edit-cancel-btn:hover { background: var(--surface2); }
 
-  /* ── ASSIGNMENT BANNERS (from assignments page) ── */
+  /* ── ASSIGNMENT BANNERS ── */
   .assignment-banners {
     padding: 8px 12px 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 4px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
   }
   .assignment-banners:empty { display: none; }
   .assignment-banner {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    border: 1px dashed;
-    cursor: default;
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 500; border: 1px dashed; cursor: default;
   }
-  .assignment-banner .banner-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .assignment-banner .banner-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .assignment-banner .banner-subject {
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.7;
-    margin-left: auto;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; opacity: 0.7; margin-left: auto;
   }
-  .assignment-banner.completed-banner {
-    opacity: 0.4;
-    text-decoration: line-through;
+  .assignment-banner.completed-banner { opacity: 0.4; text-decoration: line-through; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    body { overflow: hidden; }
+
+    .sidebar { display: none; }
+    .bottom-nav { display: block; }
+
+    .main-wrap {
+      margin-left: 0;
+      height: 100vh;
+    }
+
+    .topbar { padding: 0 14px; height: 48px; }
+    .month-label { font-size: 14px; }
+    .today-btn { font-size: 11px; padding: 5px 10px; }
+    .nav-btn { width: 26px; height: 26px; font-size: 14px; }
+
+    /* Stack calendar above day panel, both scrollable together */
+    .panels {
+      flex-direction: column;
+      padding: 8px 8px calc(72px + env(safe-area-inset-bottom)) 8px;
+      gap: 8px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      /* fill remaining height below topbar */
+      height: calc(100vh - 48px);
+    }
+
+    .calendar-panel {
+      flex: none;
+      height: auto;
+      overflow: visible;
+    }
+    .cal-grid {
+      grid-template-rows: repeat(6, 70px);
+      overflow: visible;
+    }
+    .cal-cell { padding: 4px 3px; gap: 2px; }
+    .cal-date { font-size: 11px; width: 20px; height: 20px; }
+    .cal-day-name { font-size: 9px; padding: 7px 2px; }
+    .cal-event-pill { font-size: 9px; padding: 1px 3px; }
+
+    /* Day panel full width, fixed height with internal scroll */
+    .day-panel {
+      width: 100%;
+      flex-shrink: 0;
+      height: 360px;
+    }
+    .day-panel-header { padding: 12px 14px 10px; }
+    .day-panel-date { font-size: 30px; }
+    .day-panel-month { font-size: 12px; }
+    .day-add-btn { margin-top: 8px; padding: 7px 12px; font-size: 12px; }
+
+    /* Modal fits the screen */
+    .event-modal-box,
+    .edit-modal-box { width: 92%; padding: 20px 16px; }
   }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR (desktop) -->
 <div class="sidebar" id="sidebar">
   <div class="menu-item menu-toggle" id="menu-toggle">
     <span class="material-symbols-outlined">menu</span>
@@ -528,6 +573,27 @@
     <span class="label">Settings</span>
   </a>
 </div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="homepage.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">home</span>
+    </a>
+    <a href="calendar.html" class="bottom-nav-item active">
+      <span class="material-symbols-outlined">calendar_month</span>
+    </a>
+    <a href="notes.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">assignment</span>
+    </a>
+    <a href="clock.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">timer</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">settings</span>
+    </a>
+  </div>
+</nav>
 
 <!-- MAIN -->
 <div class="main-wrap">
@@ -628,9 +694,10 @@
 </div>
 
 <script type="module">
-  import { initializeApp }             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { initializeApp }               from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteField }
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCD6MqOQtkVlGuhfMQTMxLl226_9coEU9k",
@@ -648,8 +715,6 @@
 
   let events     = {};
   let userDocRef = null;
-
-  // Tracks which event is being edited: { dateKey, index }
   let editTarget = null;
 
   document.getElementById('menu-toggle').addEventListener('click', () => {
@@ -672,18 +737,15 @@
 
   async function saveEvents() {
     if (!userDocRef) return;
-    // Delete the field first so removed date keys are truly gone, then rewrite
     await updateDoc(userDocRef, { calendarEvents: deleteField() });
     await setDoc(userDocRef, { calendarEvents: events }, { merge: true });
   }
 
-  // ── Open the edit modal for a specific event ──
   function openEditModal(key, index, e) {
-    if (e) e.stopPropagation(); // don't bubble to the cell click
+    if (e) e.stopPropagation();
     const ev = events[key][index];
-    if (ev.fromAssignment) return; // assignment events are managed from the assignments page
+    if (ev.fromAssignment) return;
     editTarget = { key, index };
-
     document.getElementById('editTitle').value = ev.title;
     document.getElementById('editStart').value = ev.start;
     document.getElementById('editEnd').value   = ev.end;
@@ -698,19 +760,13 @@
     editTarget = null;
   }
 
-  // Update color bar when color picker changes
   document.getElementById('editColor').addEventListener('change', function() {
     document.getElementById('editColorBar').style.background = this.value;
   });
-
-  // Close on backdrop click
-  document.getElementById('editModal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeEditModal();
-  });
+  document.getElementById('editModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEditModal(); });
   document.getElementById('editCloseBtn').addEventListener('click', closeEditModal);
   document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
 
-  // Save edits
   document.getElementById('editSaveBtn').addEventListener('click', async () => {
     if (!editTarget) return;
     const title = document.getElementById('editTitle').value.trim();
@@ -718,29 +774,27 @@
     const end   = document.getElementById('editEnd').value;
     const color = document.getElementById('editColor').value;
     if (!title) { document.getElementById('editTitle').focus(); return; }
-
     events[editTarget.key][editTarget.index] = { title, start, end, color };
     events[editTarget.key].sort((a,b) => timeToMins(a.start) - timeToMins(b.start));
-
     closeEditModal();
     await saveEvents();
-    renderCalendar();
-    renderDayPanel();
+    renderCalendar(); renderDayPanel();
   });
 
-  // Delete event
   document.getElementById('editDeleteBtn').addEventListener('click', async () => {
     if (!editTarget) return;
     events[editTarget.key].splice(editTarget.index, 1);
     if (events[editTarget.key].length === 0) delete events[editTarget.key];
-
     closeEditModal();
     await saveEvents();
-    renderCalendar();
-    renderDayPanel();
+    renderCalendar(); renderDayPanel();
   });
 
-  // ── Calendar grid ──
+  const SUBJECT_COLORS = {
+    math: '#d50000', science: '#4285f4', english: '#0dd000',
+    history: '#ffd54a', orchestra: '#7e00d2', spanish: '#ff9900'
+  };
+
   function renderCalendar() {
     document.getElementById('monthLabel').innerHTML =
       `${MONTH_NAMES[viewMonth]} <span class="year">${viewYear}</span>`;
@@ -781,49 +835,35 @@
         evDiv.className = 'cal-events';
         events[key].slice(0,2).forEach((ev, idx) => {
           const p = document.createElement('div');
-          p.className    = 'cal-event-pill';
-          const pillColor = ev.fromAssignment
-            ? (SUBJECT_COLORS[ev.subject] || '#aaaaaa')
-            : ev.color;
+          p.className = 'cal-event-pill';
+          const pillColor = ev.fromAssignment ? (SUBJECT_COLORS[ev.subject] || '#aaaaaa') : ev.color;
           p.style.cssText = ev.fromAssignment
             ? `background:${pillColor}18;color:${pillColor};border-left:2px dashed ${pillColor};padding-left:4px;opacity:${ev.completed?0.45:1};`
             : `background:${pillColor}1a;color:${pillColor};`;
-          p.textContent  = ev.title;
-          if (!ev.fromAssignment) {
-            p.addEventListener('click', e => openEditModal(key, idx, e));
-          }
+          p.textContent = ev.title;
+          if (!ev.fromAssignment) p.addEventListener('click', e => openEditModal(key, idx, e));
           evDiv.appendChild(p);
         });
         if (events[key].length > 2) {
           const more = document.createElement('div');
           more.style.cssText = 'font-size:10px;color:var(--text-muted);padding:1px 4px;';
-          more.textContent   = `+${events[key].length-2} more`;
+          more.textContent = `+${events[key].length-2} more`;
           evDiv.appendChild(more);
         }
         cell.appendChild(evDiv);
       }
 
-      // clicking the cell selects the day (but not if a pill was clicked)
       cell.addEventListener('click', () => {
         selectedDate = new Date(d);
-        renderCalendar();
-        renderDayPanel();
+        renderCalendar(); renderDayPanel();
       });
       grid.appendChild(cell);
     }
   }
 
-  // ── Day panel ──
-  // Subject colour map (matches assignments page)
-  const SUBJECT_COLORS = {
-    math: '#d50000', science: '#4285f4', english: '#0dd000',
-    history: '#ffd54a', orchestra: '#7e00d2', spanish: '#ff9900'
-  };
-
   function renderDayPanel() {
     const isToday = isSameDay(selectedDate, today);
-    document.getElementById('dayWeekday').textContent =
-      DAY_NAMES_LONG[selectedDate.getDay()].toUpperCase();
+    document.getElementById('dayWeekday').textContent = DAY_NAMES_LONG[selectedDate.getDay()].toUpperCase();
     const el = document.getElementById('dayDate');
     el.textContent = selectedDate.getDate();
     el.className   = 'day-panel-date' + (isToday ? ' is-today' : '');
@@ -837,9 +877,7 @@
     const container = document.getElementById('assignmentBanners');
     container.innerHTML = '';
     const key = dateKey(selectedDate);
-    const dayEvents = events[key] || [];
-    const assignmentEvents = dayEvents.filter(ev => ev.fromAssignment);
-    assignmentEvents.forEach(ev => {
+    (events[key] || []).filter(ev => ev.fromAssignment).forEach(ev => {
       const color = SUBJECT_COLORS[ev.subject] || '#aaaaaa';
       const banner = document.createElement('div');
       banner.className = 'assignment-banner' + (ev.completed ? ' completed-banner' : '');
@@ -853,51 +891,44 @@
     });
   }
 
-  // ── Time grid ──
   function renderTimeGrid() {
     const grid = document.getElementById('timeGrid');
     grid.innerHTML = '';
 
     if (isSameDay(selectedDate, today)) {
       const line = document.createElement('div');
-      line.className  = 'now-line';
-      line.style.top  = ((today.getHours()*60+today.getMinutes())/60*CELL_H) + 'px';
+      line.className = 'now-line';
+      line.style.top = ((today.getHours()*60+today.getMinutes())/60*CELL_H) + 'px';
       grid.appendChild(line);
     }
 
     for (let h = 0; h < 24; h++) {
-      const row  = document.createElement('div');
-      row.className  = 'time-row';
-      const lbl  = document.createElement('div');
-      lbl.className  = 'time-label';
+      const row  = document.createElement('div'); row.className = 'time-row';
+      const lbl  = document.createElement('div'); lbl.className = 'time-label';
       if (h > 0) lbl.textContent = `${h===12?12:h%12} ${h<12?'AM':'PM'}`;
-      const area = document.createElement('div');
-      area.className = 'time-line-area';
-      row.appendChild(lbl);
-      row.appendChild(area);
+      const area = document.createElement('div'); area.className = 'time-line-area';
+      row.appendChild(lbl); row.appendChild(area);
       grid.appendChild(row);
     }
 
     const key = dateKey(selectedDate);
     (events[key] || []).forEach((ev, idx) => {
-      if (ev.fromAssignment) return; // shown as banners above, not on time grid
+      if (ev.fromAssignment) return;
       const el = document.createElement('div');
-      el.className    = 'timed-event';
+      el.className = 'timed-event';
       el.style.cssText = `top:${timeToMins(ev.start)/60*CELL_H}px;height:${Math.max((timeToMins(ev.end)-timeToMins(ev.start))/60*CELL_H,22)}px;background:${ev.color}14;border-left-color:${ev.color};color:${ev.color};`;
-      el.innerHTML    = `<div class="timed-event-title">${ev.title}</div><div class="timed-event-time">${ev.start} – ${ev.end}</div>`;
-      // clicking a timed event opens the edit modal
+      el.innerHTML = `<div class="timed-event-title">${ev.title}</div><div class="timed-event-time">${ev.start} – ${ev.end}</div>`;
       el.addEventListener('click', e => openEditModal(key, idx, e));
       grid.appendChild(el);
     });
 
-    const scroll   = document.getElementById('dayScroll');
-    const nowMins  = today.getHours()*60+today.getMinutes();
+    const scroll  = document.getElementById('dayScroll');
+    const nowMins = today.getHours()*60+today.getMinutes();
     scroll.scrollTop = isSameDay(selectedDate, today)
       ? Math.max(0, (nowMins/60-1)*CELL_H)
       : 8*CELL_H;
   }
 
-  // ── Nav ──
   document.getElementById('prevMonth').addEventListener('click', () => {
     if (--viewMonth < 0) { viewMonth = 11; viewYear--; }
     renderCalendar();
@@ -912,7 +943,6 @@
     renderCalendar(); renderDayPanel();
   });
 
-  // ── Add event modal ──
   document.getElementById('addEventBtn').addEventListener('click', () => {
     document.getElementById('evtTitle').value = '';
     document.getElementById('eventModal').classList.add('open');
@@ -930,19 +960,15 @@
     const end   = document.getElementById('evtEnd').value;
     const color = document.getElementById('evtColor').value;
     if (!title) { document.getElementById('evtTitle').focus(); return; }
-
     const key = dateKey(selectedDate);
     if (!events[key]) events[key] = [];
     events[key].push({ title, start, end, color });
     events[key].sort((a,b) => timeToMins(a.start) - timeToMins(b.start));
-
     document.getElementById('eventModal').classList.remove('open');
     await saveEvents();
-    renderCalendar();
-    renderDayPanel();
+    renderCalendar(); renderDayPanel();
   });
 
-  // ── Auth ──
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = "index.html"; return; }
     userDocRef = doc(db, "users", user.uid);
