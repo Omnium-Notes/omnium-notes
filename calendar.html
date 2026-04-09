@@ -61,21 +61,38 @@
 
   /* ── BOTTOM NAV (mobile) ── */
   .bottom-nav {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-    background: #0d0d0d; border-top: 1px solid var(--border);
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: #111;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    height: 64px;
     padding-bottom: env(safe-area-inset-bottom);
   }
   .bottom-nav-inner {
-    display: flex; align-items: center; justify-content: space-around; height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 64px;
   }
   .bottom-nav-item {
-    display: flex; align-items: center; justify-content: center;
-    flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
-    padding: 8px 0; transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-decoration: none;
+    color: rgba(255,255,255,0.5);
+    padding: 8px 0;
+    transition: color 0.2s ease;
+    cursor: pointer;
   }
   .bottom-nav-item.active { color: white; }
   .bottom-nav-item .material-symbols-outlined {
-    font-size: 30px; font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+    font-size: 30px;
+    font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
   }
   .bottom-nav-item.active .material-symbols-outlined {
     font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
@@ -123,30 +140,63 @@
   .panels { display: flex; height: 100%; padding: 16px; gap: 12px; }
 
   .calendar-panel {
-    flex: 1; background: var(--surface); border-radius: var(--radius);
-    border: 1px solid var(--border); display: flex; flex-direction: column;
-    overflow: hidden; min-width: 0;
+    flex: 1;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+  /* Unified 7-column grid spanning header row + 6 week rows */
+  .cal-unified {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows: auto repeat(6, 1fr);
+    overflow: hidden;
+    border-radius: var(--radius);
   }
   .cal-header {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid var(--border); background: var(--surface2);
-    border-radius: var(--radius) var(--radius) 0 0;
+    display: contents;
   }
   .cal-day-name {
-    text-align: center; padding: 10px 4px; font-size: 10px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+    text-align: center;
+    padding: 10px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  /* First and last day-name get rounded corners */
+  .cal-day-name:first-child {
+    border-radius: var(--radius) 0 0 0;
+  }
+  .cal-day-name:last-child {
+    border-radius: 0 var(--radius) 0 0;
   }
   .cal-grid {
-    flex: 1; display: grid; grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(6, 1fr); overflow: hidden;
-    border-radius: 0 0 var(--radius) var(--radius);
+    display: contents;
   }
   .cal-cell {
-    border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    padding: 7px 8px; cursor: pointer; transition: background 0.12s;
-    display: flex; flex-direction: column; gap: 3px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 7px 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    overflow: hidden;
   }
+  /* Every 7th cell (last column) has no right border */
   .cal-cell:nth-child(7n) { border-right: none; }
+  /* Last 7 cells (bottom row) have no bottom border */
   .cal-cell:nth-last-child(-n+7) { border-bottom: none; }
   .cal-cell:hover { background: var(--accent-dim); }
   .cal-cell.other-month { background: #151515; }
@@ -323,11 +373,16 @@
 
     /* Each screen = 50% of 200%-wide container = 1 full viewport width */
     .calendar-panel {
-      width: 50%; flex: none; border-radius: 0;
-      border: none; height: 100%; overflow: hidden;
+      width: 50%;
+      flex: none;
+      border-radius: 0;
+      border: none;
+      height: 100%;
+      overflow: hidden;
     }
-    .cal-header { border-radius: 0; }
-    .cal-grid { border-radius: 0; }
+    .cal-unified { border-radius: 0; }
+    .cal-day-name:first-child { border-radius: 0; }
+    .cal-day-name:last-child  { border-radius: 0; }
     .cal-day-name { font-size: 10px; padding: 10px 2px; }
     .cal-cell { padding: 6px 4px; }
     .cal-date { font-size: 13px; width: 26px; height: 26px; }
@@ -411,8 +466,10 @@
     <div class="panels" id="panels">
       <!-- Screen 1: Calendar grid -->
       <div class="calendar-panel">
-        <div class="cal-header" id="calHeader"></div>
-        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-unified">
+          <div class="cal-header" id="calHeader"></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
       </div>
       <!-- Screen 2: Day detail -->
       <div class="day-panel">
