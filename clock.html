@@ -16,9 +16,16 @@
   --glass: rgba(255,255,255,0.03);
 }
 
-* { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 
 body {
   margin: 0;
@@ -46,7 +53,10 @@ body {
   left: 0;
   z-index: 200;
 }
-.menu-box.expanded { width: 220px; }
+
+.menu-box.expanded {
+  width: 220px;
+}
 
 .menu-item {
   display: flex;
@@ -63,24 +73,38 @@ body {
   position: relative;
   flex-shrink: 0;
 }
-.menu-item:hover { background: rgba(255,255,255,0.07); color: white; }
-.menu-item.active { color: white; }
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.07);
+  color: white;
+}
+
+.menu-item.active {
+  color: white;
+}
+
 .menu-item.active::before {
   content: "";
   position: absolute;
-  left: -8px; top: 50%;
+  left: -8px;
+  top: 50%;
   transform: translateY(-50%);
-  height: 28px; width: 3px;
+  height: 28px;
+  width: 3px;
   background-color: white;
   border-radius: 2px;
 }
-.menu-toggle { margin-bottom: 16px; }
+
+.menu-toggle {
+  margin-bottom: 16px;
+}
 
 .menu-box .material-symbols-outlined {
   font-size: 28px;
   flex-shrink: 0;
   font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
 }
+
 .menu-box .menu-item.active .material-symbols-outlined {
   font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
@@ -96,6 +120,7 @@ body {
   transition-delay: 0s;
   pointer-events: none;
 }
+
 .menu-box.expanded .label {
   opacity: 1;
   transform: translateX(0);
@@ -108,7 +133,56 @@ body {
   margin: 8px;
   flex-shrink: 0;
 }
-.spacer { flex: 1; }
+
+.spacer {
+  flex: 1;
+}
+
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  height: 64px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 64px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-decoration: none;
+  color: rgba(255,255,255,0.5);
+  padding: 8px 0;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.bottom-nav-item.active {
+  color: white;
+}
+
+.bottom-nav-item .material-symbols-outlined {
+  font-size: 30px;
+  font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+}
+
+.bottom-nav-item.active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
 
 /* ── MAIN CONTENT ── */
 .main-content {
@@ -263,57 +337,141 @@ button.secondary {
   color: var(--muted);
 }
 
+/* ── MOBILE ── */
 @media (max-width: 600px) {
-  .card {
-    width: 90%;
-    height: calc(100vh - 100px);
-    padding: 36px 24px;
+  .menu-box {
+    display: none;
   }
-  .big-time { font-size: 64px; }
-  h1 { font-size: 26px; }
-  button { font-size: 16px; }
+
+  .bottom-nav {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 16px 16px calc(64px + env(safe-area-inset-bottom) + 16px) 16px;
+    justify-content: flex-start;
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  p.lead {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .big-time {
+    font-size: 60px;
+  }
+
+  .session {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .timer-display {
+    margin-bottom: 20px;
+  }
+
+  .controls {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  button {
+    padding: 14px 10px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  .settings {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .setting label {
+    font-size: 13px;
+  }
+
+  .setting input[type="number"] {
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .footer {
+    font-size: 13px;
+  }
+
+  .small {
+    font-size: 13px;
+  }
 }
 </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR NAV ── -->
+<!-- ── SIDEBAR (desktop) ── -->
 <div class="menu-box" id="menu-box">
   <div class="menu-item menu-toggle" id="menu-toggle">
     <span class="material-symbols-outlined">menu</span>
     <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
   </div>
-
   <a href="homepage.html" class="menu-item">
     <span class="material-symbols-outlined">home</span>
     <span class="label">Home</span>
   </a>
-
   <a href="calendar.html" class="menu-item">
     <span class="material-symbols-outlined">calendar_month</span>
     <span class="label">Calendar</span>
   </a>
-
   <a href="notes.html" class="menu-item">
     <span class="material-symbols-outlined">assignment</span>
     <span class="label">Assignments</span>
   </a>
-
   <a href="clock.html" class="menu-item active">
     <span class="material-symbols-outlined">timer</span>
     <span class="label">Timer</span>
   </a>
-
   <div class="spacer"></div>
   <div class="nav-divider"></div>
-
   <a href="settings.html" class="menu-item">
     <span class="material-symbols-outlined">settings</span>
     <span class="label">Settings</span>
   </a>
 </div>
 
-<!-- ── MAIN CONTENT ── -->
+<!-- ── BOTTOM NAV (mobile) ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="homepage.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">home</span>
+    </a>
+    <a href="calendar.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">calendar_month</span>
+    </a>
+    <a href="notes.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">assignment</span>
+    </a>
+    <a href="clock.html" class="bottom-nav-item active">
+      <span class="material-symbols-outlined">timer</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="material-symbols-outlined">settings</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ── main content ── -->
 <div class="main-content">
   <div class="card" role="application" aria-label="Pomodoro timer">
     <h1>Pomodoro Timer</h1>
@@ -364,15 +522,15 @@ button.secondary {
   const dailyLogKey = `pomodoroDailyLog_${uid}`;
   const timerStateKey = `pomodoroState_${uid}`;
 
-  const timeDisplay = document.getElementById('timeDisplay');
+  const timeDisplay  = document.getElementById('timeDisplay');
   const sessionLabel = document.getElementById('sessionLabel');
-  const startBtn = document.getElementById('startBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const workInput = document.getElementById('workInput');
-  const breakInput = document.getElementById('breakInput');
-  const progressBar = document.getElementById('progressBar');
-  const cyclesEl = document.getElementById('cycles');
+  const startBtn     = document.getElementById('startBtn');
+  const pauseBtn     = document.getElementById('pauseBtn');
+  const resetBtn     = document.getElementById('resetBtn');
+  const workInput    = document.getElementById('workInput');
+  const breakInput   = document.getElementById('breakInput');
+  const progressBar  = document.getElementById('progressBar');
+  const cyclesEl     = document.getElementById('cycles');
 
   let workSeconds = 0;
   let breakSeconds = 0;
@@ -383,16 +541,16 @@ button.secondary {
   let paused = false;
   let sessionsCompleted = 0;
 
-  function fmt(s){
-    const m = Math.floor(s/60);
-    const sec = s%60;
+  function fmt(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
     return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
   }
 
-  function updateUI(){
+  function updateUI() {
     timeDisplay.textContent = fmt(Math.max(0, Math.floor(remaining)));
     sessionLabel.textContent = mode.toUpperCase();
-    const total = mode==='work'? workSeconds : breakSeconds;
+    const total = mode === 'work' ? workSeconds : breakSeconds;
     const width = total > 0 ? ((total - remaining) / total) * 100 : 0;
     progressBar.style.width = Math.max(0, Math.min(100, width)) + '%';
     cyclesEl.textContent = `Sessions completed: ${sessionsCompleted}`;
@@ -400,15 +558,15 @@ button.secondary {
     pauseBtn.disabled = !running || paused;
   }
 
-  function recordSessionTime(sessionMode, minutes){
+  function recordSessionTime(sessionMode, minutes) {
     const today = new Date().toLocaleDateString();
     let dailyLog = JSON.parse(localStorage.getItem(dailyLogKey)) || {};
-    if(!dailyLog[today]) dailyLog[today] = { work: 0, break: 0 };
+    if (!dailyLog[today]) dailyLog[today] = { work: 0, break: 0 };
     dailyLog[today][sessionMode] += minutes;
     localStorage.setItem(dailyLogKey, JSON.stringify(dailyLog));
   }
 
-  function saveTimerState(){
+  function saveTimerState() {
     const payload = {
       remaining: Math.max(0, Math.floor(remaining)),
       mode,
@@ -422,15 +580,17 @@ button.secondary {
     localStorage.setItem(timerStateKey, JSON.stringify(payload));
   }
 
-  function clearTimerState(){ localStorage.removeItem(timerStateKey); }
-
-  function finishSessionActions(){
-    const completedMinutes = (mode === 'work' ? workSeconds : breakSeconds) / 60;
-    recordSessionTime(mode, completedMinutes);
-    if(mode === 'work') sessionsCompleted++;
+  function clearTimerState() {
+    localStorage.removeItem(timerStateKey);
   }
 
-  function switchMode(){
+  function finishSessionActions() {
+    const completedMinutes = (mode === 'work' ? workSeconds : breakSeconds) / 60;
+    recordSessionTime(mode, completedMinutes);
+    if (mode === 'work') sessionsCompleted++;
+  }
+
+  function switchMode() {
     finishSessionActions();
     mode = mode === 'work' ? 'break' : 'work';
     remaining = mode === 'work' ? workSeconds : breakSeconds;
@@ -438,58 +598,75 @@ button.secondary {
     updateUI();
   }
 
-  function tick(){
+  function tick() {
     remaining -= 1;
-    if(remaining <= 0){ playBeep(); switchMode(); }
+    if (remaining <= 0) { playBeep(); switchMode(); }
     else saveTimerState();
     updateUI();
   }
 
-  function playBeep(){
-    try{
+  function playBeep() {
+    try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const o = ctx.createOscillator();
       const g = ctx.createGain();
-      o.type='sine'; o.frequency.value=880;
-      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine';
+      o.frequency.value = 880;
+      o.connect(g);
+      g.connect(ctx.destination);
       g.gain.setValueAtTime(0.08, ctx.currentTime);
-      o.start(); o.stop(ctx.currentTime + 0.25);
-    }catch(e){}
+      o.start();
+      o.stop(ctx.currentTime + 0.25);
+    } catch(e) {}
   }
 
-  function startTimer(){
-    if(running && !paused) return;
-    running = true; paused = false;
+  function startTimer() {
+    if (running && !paused) return;
+    running = true;
+    paused = false;
     saveTimerState();
     clearInterval(timerInterval);
     timerInterval = setInterval(tick, 1000);
     updateUI();
   }
 
-  function pauseTimer(){
-    paused = true; running = false;
+  function pauseTimer() {
+    paused = true;
+    running = false;
     clearInterval(timerInterval);
-    saveTimerState(); updateUI();
+    saveTimerState();
+    updateUI();
   }
 
-  function resetTimer(){
-    paused = false; running = false;
+  function resetTimer() {
+    paused = false;
+    running = false;
     clearInterval(timerInterval);
-    workSeconds = parseInt(workInput.value,10) * 60;
-    breakSeconds = parseInt(breakInput.value,10) * 60;
-    mode = 'work'; remaining = workSeconds;
+    workSeconds = parseInt(workInput.value, 10) * 60;
+    breakSeconds = parseInt(breakInput.value, 10) * 60;
+    mode = 'work';
+    remaining = workSeconds;
     sessionsCompleted = 0;
-    clearTimerState(); updateUI();
+    clearTimerState();
+    updateUI();
   }
 
-  function loadTimerState(){
+  function loadTimerState() {
     workSeconds = parseInt(workInput.value, 10) * 60;
     breakSeconds = parseInt(breakInput.value, 10) * 60;
     const saved = localStorage.getItem(timerStateKey);
-    if(!saved){ remaining = workSeconds; mode = 'work'; running = false; paused = false; sessionsCompleted = 0; updateUI(); return; }
+    if (!saved) {
+      remaining = workSeconds;
+      mode = 'work';
+      running = false;
+      paused = false;
+      sessionsCompleted = 0;
+      updateUI();
+      return;
+    }
     const state = JSON.parse(saved);
-    if(state.workInput) workInput.value = state.workInput;
-    if(state.breakInput) breakInput.value = state.breakInput;
+    if (state.workInput) workInput.value = state.workInput;
+    if (state.breakInput) breakInput.value = state.breakInput;
     workSeconds = parseInt(workInput.value, 10) * 60;
     breakSeconds = parseInt(breakInput.value, 10) * 60;
     mode = state.mode || 'work';
@@ -497,37 +674,44 @@ button.secondary {
     paused = !!state.paused;
     const wasRunning = !!state.running;
     const now = Date.now();
-    const elapsed = Math.floor((now - (state.timestamp || now))/1000);
-    if(wasRunning && !paused){
-      let newRemaining = (typeof state.remaining === 'number'? state.remaining : (mode==='work'? workSeconds : breakSeconds)) - elapsed;
-      while(newRemaining <= 0){
-        const finishedMinutes = (mode==='work'? workSeconds : breakSeconds)/60;
+    const elapsed = Math.floor((now - (state.timestamp || now)) / 1000);
+    if (wasRunning && !paused) {
+      let newRemaining = (typeof state.remaining === 'number'
+        ? state.remaining
+        : (mode === 'work' ? workSeconds : breakSeconds)) - elapsed;
+      while (newRemaining <= 0) {
+        const finishedMinutes = (mode === 'work' ? workSeconds : breakSeconds) / 60;
         recordSessionTime(mode, finishedMinutes);
-        if(mode==='work') sessionsCompleted++;
-        mode = mode==='work'? 'break' : 'work';
-        newRemaining += (mode==='work'? workSeconds : breakSeconds);
+        if (mode === 'work') sessionsCompleted++;
+        mode = mode === 'work' ? 'break' : 'work';
+        newRemaining += (mode === 'work' ? workSeconds : breakSeconds);
       }
       remaining = newRemaining;
-      running = true; paused = false;
+      running = true;
+      paused = false;
       clearInterval(timerInterval);
       timerInterval = setInterval(tick, 1000);
-      saveTimerState(); updateUI();
+      saveTimerState();
+      updateUI();
     } else {
-      remaining = (typeof state.remaining === 'number') ? state.remaining : (mode==='work'? workSeconds : breakSeconds);
-      running = false; updateUI();
+      remaining = (typeof state.remaining === 'number')
+        ? state.remaining
+        : (mode === 'work' ? workSeconds : breakSeconds);
+      running = false;
+      updateUI();
     }
   }
 
   document.addEventListener('visibilitychange', () => {
-    if(document.hidden) saveTimerState();
+    if (document.hidden) saveTimerState();
     else loadTimerState();
   });
 
   startBtn.addEventListener('click', () => {
-    workSeconds = parseInt(workInput.value,10) * 60;
-    breakSeconds = parseInt(breakInput.value,10) * 60;
-    if(!running || paused){
-      if(!remaining || remaining <= 0){ remaining = workSeconds; mode = 'work'; }
+    workSeconds = parseInt(workInput.value, 10) * 60;
+    breakSeconds = parseInt(breakInput.value, 10) * 60;
+    if (!running || paused) {
+      if (!remaining || remaining <= 0) { remaining = workSeconds; mode = 'work'; }
       startTimer();
     }
   });
