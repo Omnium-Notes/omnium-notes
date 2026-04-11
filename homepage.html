@@ -14,7 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -37,10 +41,14 @@
       gap: 4px;
       overflow: hidden;
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       z-index: 200;
     }
-    .menu-box.expanded { width: 220px; }
+
+    .menu-box.expanded {
+      width: 220px;
+    }
 
     .menu-item {
       display: flex;
@@ -57,24 +65,38 @@
       position: relative;
       flex-shrink: 0;
     }
-    .menu-item:hover { background: rgba(255,255,255,0.07); color: white; }
-    .menu-item.active { color: white; }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: white;
+    }
+
+    .menu-item.active {
+      color: white;
+    }
+
     .menu-item.active::before {
       content: "";
       position: absolute;
-      left: -8px; top: 50%;
+      left: -8px;
+      top: 50%;
       transform: translateY(-50%);
-      height: 28px; width: 3px;
+      height: 28px;
+      width: 3px;
       background-color: white;
       border-radius: 2px;
     }
-    .menu-toggle { margin-bottom: 16px; }
+
+    .menu-toggle {
+      margin-bottom: 16px;
+    }
 
     .menu-box .material-symbols-outlined {
       font-size: 28px;
       flex-shrink: 0;
       font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
     }
+
     .menu-box .menu-item.active .material-symbols-outlined {
       font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     }
@@ -90,6 +112,7 @@
       transition-delay: 0s;
       pointer-events: none;
     }
+
     .menu-box.expanded .label {
       opacity: 1;
       transform: translateX(0);
@@ -102,7 +125,56 @@
       margin: 8px;
       flex-shrink: 0;
     }
-    .spacer { flex: 1; }
+
+    .spacer {
+      flex: 1;
+    }
+
+    /* ── BOTTOM NAV (mobile only) ── */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: #111;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      height: 64px;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .bottom-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 64px;
+    }
+
+    .bottom-nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-decoration: none;
+      color: rgba(255,255,255,0.5);
+      padding: 8px 0;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .bottom-nav-item.active {
+      color: white;
+    }
+
+    .bottom-nav-item .material-symbols-outlined {
+      font-size: 30px;
+      font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .bottom-nav-item.active .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
 
     /* ── MAIN CONTENT ── */
     .main-content {
@@ -137,7 +209,9 @@
       color: #FFD54A;
     }
 
-    #focusList { padding: 10px 15px; }
+    #focusList {
+      padding: 10px 15px;
+    }
 
     .assignment-card {
       background: #222;
@@ -150,7 +224,10 @@
       gap: 10px;
       transition: transform 0.2s;
     }
-    .assignment-card:hover { transform: scale(1.012); }
+
+    .assignment-card:hover {
+      transform: scale(1.012);
+    }
 
     .card-content {
       display: flex;
@@ -158,8 +235,16 @@
       font-family: 'Bruno Ace', cursive;
       color: white;
     }
-    .assignment-title { font-size: 16px; font-weight: bold; }
-    .assignment-due   { font-size: 14px; color: #ccc; }
+
+    .assignment-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .assignment-due {
+      font-size: 14px;
+      color: #ccc;
+    }
 
     .subject-tag {
       padding: 6px 10px;
@@ -168,54 +253,124 @@
       white-space: nowrap;
       color: white;
     }
+
     .subject-math      { background-color: #d50000; color: white; }
     .subject-science   { background-color: #4285f4; color: white; }
     .subject-english   { background-color: #0dd000; color: black; }
     .subject-history   { background-color: #ffd54a; color: black; }
     .subject-orchestra { background-color: #7e00d2; color: white; }
     .subject-spanish   { background-color: #ff9900; color: black; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      .menu-box {
+        display: none;
+      }
+
+      .bottom-nav {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding-bottom: calc(64px + env(safe-area-inset-bottom) + 16px);
+      }
+
+      .chart-container {
+        margin: 12px 12px 0;
+        padding: 14px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin-bottom: 14px;
+      }
+
+      h2 {
+        font-size: 20px;
+        margin: 16px 12px 8px;
+      }
+
+      #focusList {
+        padding: 6px 12px;
+      }
+
+      .assignment-card {
+        padding: 10px 12px;
+        border-radius: 10px;
+      }
+
+      .assignment-title {
+        font-size: 14px;
+      }
+
+      .assignment-due {
+        font-size: 12px;
+      }
+
+      .subject-tag {
+        font-size: 12px;
+        padding: 5px 8px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- SIDEBAR NAV -->
+  <!-- ── SIDEBAR (desktop) ── -->
   <div class="menu-box" id="menu-box">
     <div class="menu-item menu-toggle" id="menu-toggle">
       <span class="material-symbols-outlined">menu</span>
       <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
     </div>
-
     <a href="homepage.html" class="menu-item active">
       <span class="material-symbols-outlined">home</span>
       <span class="label">Home</span>
     </a>
-
     <a href="calendar.html" class="menu-item">
       <span class="material-symbols-outlined">calendar_month</span>
       <span class="label">Calendar</span>
     </a>
-
     <a href="notes.html" class="menu-item">
       <span class="material-symbols-outlined">assignment</span>
       <span class="label">Assignments</span>
     </a>
-
     <a href="clock.html" class="menu-item">
       <span class="material-symbols-outlined">timer</span>
       <span class="label">Timer</span>
     </a>
-
     <div class="spacer"></div>
     <div class="nav-divider"></div>
-
     <a href="settings.html" class="menu-item">
       <span class="material-symbols-outlined">settings</span>
       <span class="label">Settings</span>
     </a>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- ── BOTTOM NAV (mobile) ── -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="homepage.html" class="bottom-nav-item active">
+        <span class="material-symbols-outlined">home</span>
+      </a>
+      <a href="calendar.html" class="bottom-nav-item">
+        <span class="material-symbols-outlined">calendar_month</span>
+      </a>
+      <a href="notes.html" class="bottom-nav-item">
+        <span class="material-symbols-outlined">assignment</span>
+      </a>
+      <a href="clock.html" class="bottom-nav-item">
+        <span class="material-symbols-outlined">timer</span>
+      </a>
+      <a href="settings.html" class="bottom-nav-item">
+        <span class="material-symbols-outlined">settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
   <div class="main-content">
 
     <div class="chart-container">
@@ -247,12 +402,11 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    // ── Sidebar toggle ──
     document.getElementById('menu-toggle').addEventListener('click', () => {
       document.getElementById('menu-box').classList.toggle('expanded');
     });
 
-    // ── Chart ──
+    /* ── Chart ── */
     function getSevenDayData() {
       const dailyLog = JSON.parse(localStorage.getItem('pomodoroDailyLog')) || {};
       const sevenDays = [];
@@ -303,7 +457,7 @@
       });
     });
 
-    // ── Today's Focus ──
+    /* ── Today's Focus ── */
     async function renderTodaysFocus() {
       const focusList = document.getElementById('focusList');
       if (!focusList) return;
@@ -313,9 +467,9 @@
         const user = auth.currentUser;
         if (!user) { focusList.innerHTML = `<p style="color:red;">Not logged in</p>`; return; }
 
-        const userDocRef = doc(db, "users", user.uid);
-        const userSnap   = await getDoc(userDocRef);
-        const data       = userSnap.exists() ? userSnap.data() : {};
+        const userDocRef  = doc(db, "users", user.uid);
+        const userSnap    = await getDoc(userDocRef);
+        const data        = userSnap.exists() ? userSnap.data() : {};
         const assignments = data.assignments || [];
 
         if (assignments.length === 0) {
