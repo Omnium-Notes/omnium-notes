@@ -330,15 +330,11 @@
      MOBILE DAY VIEW — Card Style
   ════════════════════════════ */
 
-  /* Week strip shown inside day panel on mobile */
-  .mobile-week-strip {
-    display: none;
-  }
-
-  /* Mobile card-based schedule */
-  .mobile-schedule {
-    display: none;
-  }
+  /* Mobile-only elements hidden on desktop */
+  .mobile-week-strip,
+  .mobile-schedule-header,
+  .mobile-col-labels,
+  .mobile-schedule { display: none; }
 
   @media (max-width: 600px) {
     .sidebar { display: none; }
@@ -1006,12 +1002,10 @@
       const tRow = document.createElement('div');
       tRow.className = 'mgc-hour-row';
       const lbl = document.createElement('div');
-      lbl.className = 'mgc-hour-label' + (h === 0 ? ' hide' : '');
-      if (h > 0) {
-        const ap = h < 12 ? 'AM' : 'PM';
-        const hh = h === 12 ? 12 : h % 12;
-        lbl.textContent = `${hh} ${ap}`;
-      }
+      lbl.className = 'mgc-hour-label';
+      const ap = h < 12 ? 'AM' : 'PM';
+      const hh = h === 0 ? 12 : h === 12 ? 12 : h % 12;
+      lbl.textContent = `${hh} ${ap}`;
       tRow.appendChild(lbl);
       timesCol.appendChild(tRow);
 
