@@ -449,106 +449,105 @@
       text-transform: uppercase; color: rgba(255,255,255,0.3);
     }
 
-    /* ── Scrollable schedule ── */
+    /* ── Scrollable schedule: full 24-hr time grid ── */
     .mobile-schedule {
       display: flex;
-      flex-direction: column;
       flex: 1;
       overflow-y: auto;
-      padding: 0 12px 24px;
-      gap: 0;
+      overflow-x: hidden;
       scrollbar-width: none;
+      position: relative;
+      --mgc-hour: 56px;
     }
     .mobile-schedule::-webkit-scrollbar { display: none; }
 
-    /* Each time slot row */
-    .sched-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 6px 0;
-    }
-    .sched-time {
-      width: 40px; flex-shrink: 0;
-      font-size: 11px; font-weight: 500;
-      color: rgba(255,255,255,0.35);
-      font-variant-numeric: tabular-nums;
-      padding-top: 14px;
-      text-align: right;
-    }
-    .sched-time.no-time { visibility: hidden; }
-
-    /* ── Event card ── */
-    .sched-card {
-      flex: 1;
-      border-radius: 14px;
-      padding: 12px 14px 12px;
-      cursor: pointer;
-      transition: filter 0.15s, transform 0.1s;
+    .mgc-times {
+      flex-shrink: 0;
+      width: 50px;
       position: relative;
-      min-height: 70px;
+    }
+    .mgc-events-col {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+    }
+    .mgc-hour-row {
+      height: var(--mgc-hour);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+      box-sizing: border-box;
+    }
+    .mgc-hour-row:first-child { border-top: none; }
+    .mgc-hour-label {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.28);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      line-height: 1;
+      user-select: none;
+    }
+    .mgc-hour-label.hide { visibility: hidden; }
+
+    .mgc-event-bar {
+      position: absolute;
+      left: 4px;
+      right: 6px;
+      border-radius: 10px;
+      padding: 6px 10px 5px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: filter 0.15s, transform 0.1s;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 1px;
+      min-height: 22px;
+      z-index: 5;
     }
-    .sched-card:active { transform: scale(0.98); filter: brightness(0.9); }
-    .sched-card-category {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
-      text-transform: uppercase; opacity: 0.75; margin-bottom: 4px;
+    .mgc-event-bar:active { filter: brightness(0.85); transform: scale(0.98); }
+    .mgc-event-bar-category {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; opacity: 0.65; line-height: 1;
     }
-    .sched-card-title {
-      font-size: 15px; font-weight: 600; line-height: 1.25; margin-bottom: 10px;
+    .mgc-event-bar-title {
+      font-size: 12px; font-weight: 600; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .sched-card-time {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 500; opacity: 0.7;
-    }
-    .sched-card-time .material-symbols-outlined {
-      font-size: 13px;
-      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
-    }
-    .sched-card-menu {
-      position: absolute; top: 12px; right: 12px;
-      font-size: 16px; opacity: 0.6; cursor: pointer; letter-spacing: 1px;
-      color: inherit;
+    .mgc-event-bar-time {
+      font-size: 10px; opacity: 0.55; margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* Spare time row */
-    .sched-spare {
-      flex: 1;
-      padding: 10px 12px;
-      display: flex; flex-direction: column; gap: 3px;
+    /* Now line */
+    .mgc-now-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: rgba(255,70,70,0.85);
+      z-index: 20;
+      pointer-events: none;
+      border-radius: 1px;
     }
-    .sched-spare-label {
-      font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.45);
+    .mgc-now-line::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: -4px;
+      width: 10px; height: 10px;
+      background: rgba(255,70,70,0.9);
+      border-radius: 50%;
     }
-    .sched-spare-time {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 11px; color: rgba(255,255,255,0.3);
+    .mgc-now-label {
+      position: absolute;
+      right: 3px; top: -9px;
+      font-size: 9px; font-weight: 700;
+      color: rgba(255,80,80,0.85);
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
     }
-    .sched-spare-time .material-symbols-outlined {
-      font-size: 13px;
-      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
-    }
-    .sched-spare-line {
-      flex-shrink: 0;
-      width: 100%;
-      height: 1px;
-      background: rgba(255,255,255,0.07);
-      margin: 4px 0;
-    }
-
-    /* Empty state */
-    .mobile-empty {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 8px; color: rgba(255,255,255,0.2); padding: 32px;
-      text-align: center;
-    }
-    .mobile-empty .material-symbols-outlined {
-      font-size: 40px;
-      font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 40;
-    }
-    .mobile-empty-text { font-size: 14px; font-weight: 400; }
 
     /* Back button visible on mobile */
     .topbar-back { display: flex; }
@@ -645,11 +644,8 @@
           <button class="mobile-add-btn" id="mobileAddBtn" title="Add event">+</button>
         </div>
 
-        <!-- Mobile: col labels -->
-        <div class="mobile-col-labels" id="mobileColLabels" style="display:none;">
-          <div class="mobile-col-label-time">Time</div>
-          <div class="mobile-col-label-event">Event</div>
-        </div>
+        <!-- Mobile: col labels (hidden - now integrated in time grid) -->
+        <div class="mobile-col-labels" id="mobileColLabels" style="display:none;"></div>
 
         <!-- Desktop: assignment banners + time grid -->
         <div class="assignment-banners" id="assignmentBanners"></div>
@@ -947,7 +943,9 @@
       `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
   }
 
-  /* ── Mobile card schedule ── */
+  /* ── Mobile full-day time grid (Google Calendar style) ── */
+  const MGC_HOUR_H = 56; // px per hour
+
   function renderMobileSchedule() {
     const sched = document.getElementById('mobileSchedule');
     sched.innerHTML = '';
@@ -957,104 +955,110 @@
     const dayEvs = (events[key] || []).filter(ev => !ev.fromAssignment);
     const assignEvs = (events[key] || []).filter(ev => ev.fromAssignment);
 
-    if (dayEvs.length === 0 && assignEvs.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'mobile-empty';
-      empty.innerHTML = `
-        <span class="material-symbols-outlined">event_available</span>
-        <div class="mobile-empty-text">No events today</div>
-      `;
-      sched.appendChild(empty);
-      return;
+    // Times column
+    const timesCol = document.createElement('div');
+    timesCol.className = 'mgc-times';
+
+    // Events column
+    const eventsCol = document.createElement('div');
+    eventsCol.className = 'mgc-events-col';
+    // Total height = 24 hours
+    eventsCol.style.height = (MGC_HOUR_H * 24) + 'px';
+    eventsCol.style.position = 'relative';
+
+    // Build 24 hour rows in both columns
+    for (let h = 0; h < 24; h++) {
+      // Time label row
+      const tRow = document.createElement('div');
+      tRow.className = 'mgc-hour-row';
+      const lbl = document.createElement('div');
+      lbl.className = 'mgc-hour-label' + (h === 0 ? ' hide' : '');
+      if (h > 0) {
+        const ap = h < 12 ? 'AM' : 'PM';
+        const hh = h === 12 ? 12 : h % 12;
+        lbl.textContent = `${hh} ${ap}`;
+      }
+      tRow.appendChild(lbl);
+      timesCol.appendChild(tRow);
+
+      // Event column row (just horizontal lines)
+      const eRow = document.createElement('div');
+      eRow.className = 'mgc-hour-row';
+      eventsCol.appendChild(eRow);
     }
 
-    // Build interleaved list with spare time gaps
-    const sorted = [...dayEvs].sort((a,b) => toMins(a.start)-toMins(b.start));
+    // Now line
+    if (isSameDay(selectedDate, today)) {
+      const nowMins = today.getHours() * 60 + today.getMinutes();
+      const nowTop = nowMins / 60 * MGC_HOUR_H;
 
-    let prevEnd = null;
-    sorted.forEach((ev, idx) => {
+      const nowLine = document.createElement('div');
+      nowLine.className = 'mgc-now-line';
+      nowLine.style.top = nowTop + 'px';
+      const ap = today.getHours() < 12 ? 'AM' : 'PM';
+      const hh = today.getHours() === 12 ? 12 : today.getHours() % 12 || 12;
+      const mm = String(today.getMinutes()).padStart(2, '0');
+      nowLine.innerHTML = `<span class="mgc-now-label">${hh}:${mm} ${ap}</span>`;
+      eventsCol.appendChild(nowLine);
+    }
+
+    // Render events as positioned bars
+    dayEvs.forEach((ev, idx) => {
       const startM = toMins(ev.start);
       const endM   = toMins(ev.end);
-
-      // Spare time gap
-      if (prevEnd !== null && startM > prevEnd) {
-        const spareRow = document.createElement('div');
-        spareRow.className = 'sched-row';
-        const spareTimeEl = document.createElement('div');
-        spareTimeEl.className = 'sched-time';
-        spareTimeEl.textContent = fmt12(`${String(Math.floor(prevEnd/60)).padStart(2,'0')}:${String(prevEnd%60).padStart(2,'0')}`);
-        const spareContent = document.createElement('div');
-        spareContent.className = 'sched-spare';
-        const spareDuration = startM - prevEnd;
-        spareContent.innerHTML = `
-          <div class="sched-spare-label">You have a spare time</div>
-          <div class="sched-spare-time">
-            <span class="material-symbols-outlined">schedule</span>
-            ${fmt12(`${String(Math.floor(prevEnd/60)).padStart(2,'0')}:${String(prevEnd%60).padStart(2,'0')}`)} – ${fmt12(ev.start)}
-          </div>
-          <div class="sched-spare-line"></div>
-        `;
-        spareRow.appendChild(spareTimeEl);
-        spareRow.appendChild(spareContent);
-        sched.appendChild(spareRow);
-      }
-
-      // Event card row
-      const row = document.createElement('div');
-      row.className = 'sched-row';
-
-      const timeEl = document.createElement('div');
-      timeEl.className = 'sched-time';
-      timeEl.textContent = fmt12(ev.start);
+      const top    = startM / 60 * MGC_HOUR_H;
+      const height = Math.max((endM - startM) / 60 * MGC_HOUR_H, 22);
 
       const palette = CARD_COLORS[ev.color] || { bg: ev.color + '33', text: ev.color };
       const category = COLOR_LABELS[ev.color] || 'Event';
 
-      const card = document.createElement('div');
-      card.className = 'sched-card';
-      card.style.cssText = `background:${palette.bg};color:${palette.text};`;
-      card.innerHTML = `
-        <div>
-          <div class="sched-card-category">${category}</div>
-          <div class="sched-card-title">${ev.title}</div>
-        </div>
-        <div class="sched-card-time">
-          <span class="material-symbols-outlined">schedule</span>
-          ${fmt12(ev.start)} – ${fmt12(ev.end)}
-        </div>
-        <div class="sched-card-menu" data-idx="${idx}">···</div>
+      const bar = document.createElement('div');
+      bar.className = 'mgc-event-bar';
+      bar.style.cssText = `top:${top}px;height:${height}px;background:${palette.bg};color:${palette.text};`;
+
+      const showCategory = height >= 32;
+      const showTime     = height >= 42;
+      bar.innerHTML = `
+        ${showCategory ? `<div class="mgc-event-bar-category">${category}</div>` : ''}
+        <div class="mgc-event-bar-title">${ev.title}</div>
+        ${showTime ? `<div class="mgc-event-bar-time">${fmt12(ev.start)} – ${fmt12(ev.end)}</div>` : ''}
       `;
-      card.querySelector('.sched-card-menu').addEventListener('click', e => {
-        openEditModal(key, idx, e);
-      });
-      card.addEventListener('click', e => {
-        if (e.target.classList.contains('sched-card-menu')) return;
-        openEditModal(key, idx, e);
-      });
-
-      row.appendChild(timeEl);
-      row.appendChild(card);
-      sched.appendChild(row);
-
-      prevEnd = endM;
+      bar.addEventListener('click', e => openEditModal(key, idx, e));
+      eventsCol.appendChild(bar);
     });
 
-    // Assignment banners at bottom as subtle cards
+    // Assignment due-today pills at top of events column (all-day area)
     if (assignEvs.length > 0) {
-      const divEl = document.createElement('div');
-      divEl.style.cssText = 'padding:12px 0 4px;';
-      divEl.innerHTML = `<div style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Due today</div>`;
+      const allDay = document.createElement('div');
+      allDay.style.cssText = `
+        position: sticky; top: 0; z-index: 30;
+        background: #0f0f0f;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 6px 6px 6px 4px;
+        display: flex; flex-wrap: wrap; gap: 4px;
+      `;
       assignEvs.forEach(ev => {
-        const color = SUBJECT_COLORS[ev.subject] || '#aaa';
-        const b = document.createElement('div');
-        b.style.cssText = `display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:${color}14;border:1px dashed ${color}55;margin-bottom:6px;${ev.completed?'opacity:0.4;text-decoration:line-through;':''}`;
-        b.innerHTML = `<div style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></div>
-          <span style="font-size:13px;font-weight:500;color:${color};flex:1;">${ev.title}</span>
-          <span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${color};opacity:0.6;">${ev.subject||''}</span>`;
-        divEl.appendChild(b);
+        const c = SUBJECT_COLORS[ev.subject] || '#aaa';
+        const pill = document.createElement('div');
+        pill.style.cssText = `display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;background:${c}18;border:1px dashed ${c}55;${ev.completed ? 'opacity:0.4;text-decoration:line-through;' : ''}`;
+        pill.innerHTML = `<div style="width:5px;height:5px;border-radius:50%;background:${c};flex-shrink:0;"></div><span style="font-size:10px;font-weight:600;color:${c};">${ev.title}</span>`;
+        allDay.appendChild(pill);
       });
-      sched.appendChild(divEl);
+      sched.appendChild(allDay);
     }
+
+    sched.appendChild(timesCol);
+    sched.appendChild(eventsCol);
+
+    // Scroll to current time (or 7am default)
+    requestAnimationFrame(() => {
+      if (isSameDay(selectedDate, today)) {
+        const nowMins = today.getHours() * 60 + today.getMinutes();
+        sched.scrollTop = Math.max(0, (nowMins / 60 - 1) * MGC_HOUR_H);
+      } else {
+        sched.scrollTop = 7 * MGC_HOUR_H;
+      }
+    });
   }
 
   /* ── Day panel (desktop + mobile init) ── */
