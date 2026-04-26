@@ -3,416 +3,328 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Today's Focus</title>
+  <title>Home</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
-
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000;
+      --surface: #111;
+      --surface-2: #1a1a1a;
+      --border: rgba(255,255,255,0.07);
+      --text-primary: #fff;
+      --text-secondary: rgba(255,255,255,0.5);
+      --yellow: #FFD54A;
+      --yellow-dim: rgba(255,213,74,0.12);
+      --sidebar-collapsed: 64px;
+      --sidebar-w: 220px;
     }
 
     body {
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
       display: flex;
       min-height: 100vh;
     }
 
-    /* ── SIDEBAR ── */
-    .menu-box {
-      padding: 12px 8px;
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
       height: 100vh;
-      width: 64px;
-      background-color: #111;
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      width: var(--sidebar-collapsed);
+      background: var(--surface);
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 12px 8px;
       overflow: hidden;
-      position: fixed;
-      top: 0;
-      left: 0;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
       z-index: 200;
     }
-
-    .menu-box.expanded {
-      width: 220px;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 8px;
-      border-radius: 10px;
-      cursor: pointer;
-      text-decoration: none;
-      color: rgba(255,255,255,0.6);
-      transition: background 0.2s ease, color 0.2s ease;
-      white-space: nowrap;
-      min-height: 48px;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .menu-item:hover {
-      background: rgba(255,255,255,0.07);
-      color: white;
-    }
-
-    .menu-item.active {
-      color: white;
-    }
-
-    .menu-item.active::before {
-      content: "";
-      position: absolute;
-      left: -8px;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 28px;
-      width: 3px;
-      background-color: white;
-      border-radius: 2px;
-    }
+    .sidebar.expanded { width: var(--sidebar-w); }
 
     .menu-toggle {
-      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px; border-radius: 10px; cursor: pointer;
+      color: rgba(255,255,255,0.6); margin-bottom: 12px;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap; min-height: 48px;
+    }
+    .menu-toggle:hover { background: rgba(255,255,255,0.06); color: white; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px; border-radius: 10px; cursor: pointer;
+      text-decoration: none; color: rgba(255,255,255,0.6);
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap; position: relative; min-height: 48px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: white; }
+    .nav-item.active { color: white; }
+    .nav-item.active::before {
+      content: ""; position: absolute; left: -8px; top: 50%;
+      transform: translateY(-50%); height: 28px; width: 3px;
+      background: white; border-radius: 2px;
     }
 
-    .menu-box .material-symbols-outlined {
-      font-size: 28px;
-      flex-shrink: 0;
+    .material-symbols-outlined {
+      font-size: 28px; flex-shrink: 0;
       font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
     }
-
-    .menu-box .menu-item.active .material-symbols-outlined {
+    .nav-item.active .material-symbols-outlined {
       font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     }
 
-    .label {
-      font-family: "DM Sans", sans-serif;
-      font-size: 15px;
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      opacity: 0;
-      transform: translateX(-6px);
+    .nav-label {
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 400;
+      opacity: 0; transform: translateX(-6px);
       transition: opacity 0.15s ease, transform 0.15s ease;
-      transition-delay: 0s;
       pointer-events: none;
     }
+    .sidebar.expanded .nav-label { opacity: 1; transform: translateX(0); transition-delay: 0.18s; }
 
-    .menu-box.expanded .label {
-      opacity: 1;
-      transform: translateX(0);
-      transition-delay: 0.18s;
-    }
+    .nav-divider { height: 1px; background: var(--border); margin: 8px; flex-shrink: 0; }
+    .spacer { flex: 1; }
 
-    .nav-divider {
-      height: 1px;
-      background: rgba(255,255,255,0.08);
-      margin: 8px;
-      flex-shrink: 0;
-    }
-
-    .spacer {
-      flex: 1;
-    }
-
-    /* ── BOTTOM NAV (mobile only) ── */
+    /* BOTTOM NAV */
     .bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-      background: #111;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      height: 64px;
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 200; background: var(--surface);
+      border-top: 1px solid var(--border); height: 64px;
       padding-bottom: env(safe-area-inset-bottom);
     }
+    .bottom-nav-inner { display: flex; align-items: center; justify-content: space-around; height: 64px; }
+    .bn-item {
+      display: flex; align-items: center; justify-content: center;
+      flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
+      padding: 8px 0; transition: color 0.2s;
+    }
+    .bn-item.active { color: white; }
+    .bn-item .material-symbols-outlined { font-size: 30px; }
+    .bn-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
 
-    .bottom-nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      height: 64px;
+    /* MAIN */
+    .main {
+      margin-left: var(--sidebar-collapsed);
+      flex: 1; padding: 44px 48px 60px; max-width: 900px;
     }
 
-    .bottom-nav-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      text-decoration: none;
-      color: rgba(255,255,255,0.5);
-      padding: 8px 0;
-      transition: color 0.2s ease;
-      cursor: pointer;
+    /* HEADER */
+    .header { margin-bottom: 36px; }
+    .header h1 {
+      font-family: 'DM Sans', sans-serif; font-size: 36px;
+      font-weight: 300; color: white; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .header h1 span { font-weight: 600; color: var(--yellow); }
+    .header p { margin-top: 6px; font-size: 14px; color: var(--text-secondary); }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+      display: flex; align-items: center; gap: 14px;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(255,255,255,0.14); }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .stat-icon .material-symbols-outlined { font-size: 20px; }
+    .stat-icon.yellow { background: var(--yellow-dim); color: var(--yellow); }
+    .stat-icon.red    { background: rgba(211,0,0,0.15); color: #ff5252; }
+    .stat-icon.green  { background: rgba(13,208,0,0.1); color: #4cdc49; }
+    .stat-num { font-size: 28px; font-weight: 600; line-height: 1; font-family: 'Bruno Ace', cursive; color: white; }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px;
     }
 
-    .bottom-nav-item.active {
-      color: white;
+    /* QUICK ACTIONS */
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+    .action-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px; cursor: pointer;
+      text-decoration: none; color: var(--text-primary);
+      transition: background 0.2s, border-color 0.2s, transform 0.18s; display: block;
     }
-
-    .bottom-nav-item .material-symbols-outlined {
-      font-size: 30px;
-      font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 24;
+    .action-card:hover { background: var(--surface-2); border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+    .action-card.highlight { border-color: rgba(255,213,74,0.22); background: rgba(255,213,74,0.04); }
+    .action-card.highlight:hover { background: rgba(255,213,74,0.08); border-color: rgba(255,213,74,0.32); }
+    .action-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px; background: rgba(255,255,255,0.06);
     }
+    .action-icon .material-symbols-outlined { font-size: 20px; color: rgba(255,255,255,0.7); }
+    .action-card.highlight .action-icon { background: var(--yellow-dim); }
+    .action-card.highlight .action-icon .material-symbols-outlined { color: var(--yellow); }
+    .action-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: white; }
+    .action-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
 
-    .bottom-nav-item.active .material-symbols-outlined {
-      font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    /* ASSIGNMENTS */
+    .assignments-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
     }
-
-    /* ── MAIN CONTENT ── */
-    .main-content {
-      margin-left: 64px;
-      flex: 1;
-      padding-bottom: 40px;
+    .assignments-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 22px 16px; border-bottom: 1px solid var(--border);
     }
-
-    /* ── CHART ── */
-    .chart-container {
-      width: 100%;
-      max-width: 800px;
-      padding: 20px;
-      background-color: #2d2d2d;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin: 20px auto 0;
+    .assignments-header h3 { font-size: 15px; font-weight: 600; color: white; }
+    .view-all {
+      font-size: 13px; color: var(--yellow); text-decoration: none;
+      font-weight: 500; display: flex; align-items: center; gap: 2px;
+      opacity: 0.85; transition: opacity 0.15s;
     }
+    .view-all:hover { opacity: 1; }
+    .view-all .material-symbols-outlined { font-size: 16px; }
 
-    h1 {
-      color: white;
-      text-align: center;
-      margin-bottom: 20px;
+    .assignment-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 22px; border-bottom: 1px solid var(--border);
+      transition: background 0.15s; cursor: pointer;
+      text-decoration: none; color: var(--text-primary);
     }
+    .assignment-row:last-child { border-bottom: none; }
+    .assignment-row:hover { background: var(--surface-2); }
 
-    /* ── TODAY'S FOCUS ── */
-    .focus-section {
-      display: block;
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+    .assign-left { display: flex; flex-direction: column; gap: 3px; }
+    .assign-title { font-size: 14px; font-weight: 500; font-family: 'Bruno Ace', cursive; color: white; }
+    .assign-subject { font-size: 12px; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; }
 
-    h2 {
-      margin: 20px 15px 10px;
-      font-size: 26px;
-      border-left: 5px solid #FFD54A;
-      padding-left: 10px;
-      color: #FFD54A;
-    }
+    .assign-right { display: flex; align-items: center; gap: 10px; }
+    .priority-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; font-family: 'DM Sans', sans-serif; }
+    .priority-high   { background: rgba(211,0,0,0.2);   color: #ff5252; }
+    .priority-medium { background: rgba(255,153,0,0.18); color: #ffb74d; }
+    .priority-low    { background: rgba(13,208,0,0.12);  color: #4cdc49; }
 
-    #focusList {
-      padding: 10px 15px;
-    }
+    .assign-date { font-size: 13px; color: var(--text-secondary); min-width: 52px; text-align: right; font-family: 'DM Sans', sans-serif; }
+    .assign-date.urgent { color: #ff5252; font-weight: 600; }
 
-    .assignment-card {
-      background: #222;
-      border-radius: 12px;
-      padding: 12px 15px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      transition: transform 0.2s;
-    }
+    .empty-msg { padding: 36px 22px; text-align: center; color: var(--text-secondary); font-size: 14px; }
 
-    .assignment-card:hover {
-      transform: scale(1.012);
-    }
-
-    .card-content {
-      display: flex;
-      flex-direction: column;
-      font-family: 'Bruno Ace', cursive;
-      color: white;
-    }
-
-    .assignment-title {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .assignment-due {
-      font-size: 14px;
-      color: #ccc;
-    }
-
-    .subject-tag {
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-weight: bold;
-      white-space: nowrap;
-      color: white;
-    }
-
-    .subject-math      { background-color: #d50000; color: white; }
-    .subject-science   { background-color: #4285f4; color: white; }
-    .subject-english   { background-color: #0dd000; color: black; }
-    .subject-history   { background-color: #ffd54a; color: black; }
-    .subject-orchestra { background-color: #7e00d2; color: white; }
-    .subject-spanish   { background-color: #ff9900; color: black; }
-
-    /* ── MOBILE ── */
+    /* MOBILE */
     @media (max-width: 600px) {
-      .menu-box {
-        display: none;
-      }
-
-      .bottom-nav {
-        display: block;
-      }
-
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-      }
-
-      .main-content {
-        margin-left: 0;
-        display: flex;
-        flex-direction: column;
-        height: calc(100vh - 64px - env(safe-area-inset-bottom));
-        overflow: hidden;
-        padding: 12px;
-        gap: 12px;
-      }
-
-      .chart-container {
-        margin: 0;
-        padding: 12px;
-        border-radius: 12px;
-        flex-shrink: 0;
-      }
-
-      h1 {
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
-
-      .focus-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        margin: 0;
-      }
-
-      h2 {
-        font-size: 18px;
-        margin: 0 0 6px 0;
-        flex-shrink: 0;
-      }
-
-      #focusList {
-        flex: 1;
-        overflow-y: auto;
-        padding: 0;
-        min-height: 0;
-      }
-
-      .assignment-card {
-        padding: 10px 12px;
-        border-radius: 10px;
-        margin: 6px 0;
-      }
-
-      .assignment-title {
-        font-size: 14px;
-      }
-
-      .assignment-due {
-        font-size: 12px;
-      }
-
-      .subject-tag {
-        font-size: 12px;
-        padding: 5px 8px;
-      }
+      .sidebar { display: none; }
+      .bottom-nav { display: block; }
+      html, body { height: 100%; }
+      .main { margin-left: 0; padding: 24px 16px 80px; max-width: 100%; }
+      .header h1 { font-size: 26px; }
+      .stats-row { gap: 8px; }
+      .stat-card { padding: 14px 12px; gap: 10px; }
+      .stat-num { font-size: 22px; }
+      .quick-actions { grid-template-columns: 1fr; gap: 10px; }
     }
   </style>
 </head>
-
 <body>
 
-  <!-- ── SIDEBAR (desktop) ── -->
-  <div class="menu-box" id="menu-box">
-    <div class="menu-item menu-toggle" id="menu-toggle">
+  <nav class="sidebar" id="sidebar">
+    <div class="menu-toggle" id="menu-toggle">
       <span class="material-symbols-outlined">menu</span>
-      <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
+      <span class="nav-label" style="font-size:17px;font-weight:500;color:white;">Menu</span>
     </div>
-    <a href="homepage.html" class="menu-item active">
+    <a href="homepage.html" class="nav-item active">
       <span class="material-symbols-outlined">home</span>
-      <span class="label">Home</span>
+      <span class="nav-label">Home</span>
     </a>
-    <a href="calendar.html" class="menu-item">
+    <a href="calendar.html" class="nav-item">
       <span class="material-symbols-outlined">calendar_month</span>
-      <span class="label">Calendar</span>
+      <span class="nav-label">Calendar</span>
     </a>
-    <a href="notes.html" class="menu-item">
+    <a href="notes.html" class="nav-item">
       <span class="material-symbols-outlined">assignment</span>
-      <span class="label">Assignments</span>
+      <span class="nav-label">Assignments</span>
     </a>
-    <a href="clock.html" class="menu-item">
+    <a href="clock.html" class="nav-item">
       <span class="material-symbols-outlined">timer</span>
-      <span class="label">Timer</span>
+      <span class="nav-label">Timer</span>
     </a>
     <div class="spacer"></div>
     <div class="nav-divider"></div>
-    <a href="settings.html" class="menu-item">
+    <a href="settings.html" class="nav-item">
       <span class="material-symbols-outlined">settings</span>
-      <span class="label">Settings</span>
+      <span class="nav-label">Settings</span>
     </a>
-  </div>
+  </nav>
 
-  <!-- ── BOTTOM NAV (mobile) ── -->
   <nav class="bottom-nav">
     <div class="bottom-nav-inner">
-      <a href="homepage.html" class="bottom-nav-item active">
-        <span class="material-symbols-outlined">home</span>
-      </a>
-      <a href="calendar.html" class="bottom-nav-item">
-        <span class="material-symbols-outlined">calendar_month</span>
-      </a>
-      <a href="notes.html" class="bottom-nav-item">
-        <span class="material-symbols-outlined">assignment</span>
-      </a>
-      <a href="clock.html" class="bottom-nav-item">
-        <span class="material-symbols-outlined">timer</span>
-      </a>
-      <a href="settings.html" class="bottom-nav-item">
-        <span class="material-symbols-outlined">settings</span>
-      </a>
+      <a href="homepage.html" class="bn-item active"><span class="material-symbols-outlined">home</span></a>
+      <a href="calendar.html" class="bn-item"><span class="material-symbols-outlined">calendar_month</span></a>
+      <a href="notes.html" class="bn-item"><span class="material-symbols-outlined">assignment</span></a>
+      <a href="clock.html" class="bn-item"><span class="material-symbols-outlined">timer</span></a>
+      <a href="settings.html" class="bn-item"><span class="material-symbols-outlined">settings</span></a>
     </div>
   </nav>
 
-  <!-- ── MAIN CONTENT ── -->
-  <div class="main-content">
+  <div class="main">
 
-    <div class="chart-container">
-      <h1>This Week's Productivity</h1>
-      <canvas id="dailyTimeChart"></canvas>
+    <div class="header">
+      <h1>Welcome, <span id="username">there</span></h1>
+      <p>Here's an overview of your study progress.</p>
     </div>
 
-    <div class="focus-section">
-      <h2>🔥 Today's Focus</h2>
-      <div id="focusList"></div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon yellow"><span class="material-symbols-outlined">menu_book</span></div>
+        <div>
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><span class="material-symbols-outlined">warning</span></div>
+        <div>
+          <div class="stat-num" id="statHigh">—</div>
+          <div class="stat-label">High Priority</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><span class="material-symbols-outlined">check_circle</span></div>
+        <div>
+          <div class="stat-num" id="statDone">—</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Quick Actions</div>
+    <div class="quick-actions">
+      <a href="clock.html" class="action-card highlight">
+        <div class="action-icon"><span class="material-symbols-outlined">timer</span></div>
+        <div class="action-title">Start Focus Session</div>
+        <div class="action-desc">Use the Pomodoro timer to stay productive</div>
+      </a>
+      <a href="calendar.html" class="action-card">
+        <div class="action-icon"><span class="material-symbols-outlined">calendar_month</span></div>
+        <div class="action-title">View Calendar</div>
+        <div class="action-desc">See your assignments on a timeline</div>
+      </a>
+      <a href="notes.html" class="action-card">
+        <div class="action-icon"><span class="material-symbols-outlined">add</span></div>
+        <div class="action-title">Add Assignment</div>
+        <div class="action-desc">Track a new task or homework</div>
+      </a>
+    </div>
+
+    <div class="assignments-card">
+      <div class="assignments-header">
+        <h3>Upcoming Assignments</h3>
+        <a href="notes.html" class="view-all">View all <span class="material-symbols-outlined">arrow_forward</span></a>
+      </div>
+      <div id="assignmentList">
+        <div class="empty-msg">Loading…</div>
+      </div>
     </div>
 
   </div>
@@ -437,138 +349,88 @@
     const db   = getFirestore(app);
 
     document.getElementById('menu-toggle').addEventListener('click', () => {
-      document.getElementById('menu-box').classList.toggle('expanded');
+      document.getElementById('sidebar').classList.toggle('expanded');
     });
 
-    /* ── Chart ── */
-    function getSevenDayData() {
-      const dailyLog = JSON.parse(localStorage.getItem('pomodoroDailyLog')) || {};
-      const sevenDays = [];
-      const workDataMap = new Map();
-      let maxTotalHours = 0;
-      const today = moment().startOf('day');
-
-      for (let i = 6; i >= 0; i--) {
-        const date = moment(today).subtract(i, 'days');
-        const dateKey = date.toDate().toLocaleDateString();
-        const dayLabel = date.format('ddd');
-        sevenDays.push(dayLabel);
-        const log = dailyLog[dateKey] || { work: 0, break: 0 };
-        const workHours = log.work / 60;
-        const breakHours = log.break / 60;
-        const totalHours = workHours + breakHours;
-        if (totalHours > maxTotalHours) maxTotalHours = totalHours;
-        workDataMap.set(dayLabel, { work: workHours.toFixed(1), break: breakHours.toFixed(1) });
-      }
-
-      const workData  = sevenDays.map(day => workDataMap.get(day).work);
-      const breakData = sevenDays.map(day => workDataMap.get(day).break);
-      const chartMax  = Math.ceil(maxTotalHours * 1.1) || 1;
-      return { labels: sevenDays, workData, breakData, chartMax };
+    function fmtDate(due) {
+      if (!due) return '';
+      const d = new Date(due);
+      if (isNaN(d)) return due;
+      const today = new Date(); today.setHours(0,0,0,0);
+      const diff = Math.round((d - today) / 86400000);
+      if (diff === 0) return 'Today';
+      if (diff === 1) return 'Tomorrow';
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const { labels, workData, breakData, chartMax } = getSevenDayData();
-      const ctx = document.getElementById('dailyTimeChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            { label: 'Work Time',  data: workData,  backgroundColor: '#FAC903', borderColor: '#FAC903', borderWidth: 1 },
-            { label: 'Break Time', data: breakData, backgroundColor: '#B90101', borderColor: '#B90101', borderWidth: 1 }
-          ]
-        },
-        options: {
-          responsive: true,
-          aspectRatio: 1.8,
-          scales: {
-            x: { stacked: true, title: { display: true, text: 'Day of the Week', color: 'white' }, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-            y: { stacked: true, title: { display: true, text: 'Time (Hours)', color: 'white' }, beginAtZero: true, max: chartMax, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-          },
-          plugins: { legend: { position: 'top', labels: { color: 'white' } }, title: { display: false } }
-        }
-      });
-    });
+    function isUrgent(due) {
+      if (!due) return false;
+      const d = new Date(due);
+      if (isNaN(d)) return false;
+      const today = new Date(); today.setHours(0,0,0,0);
+      return Math.round((d - today) / 86400000) <= 1;
+    }
 
-    /* ── Today's Focus ── */
-    async function renderTodaysFocus() {
-      const focusList = document.getElementById('focusList');
-      if (!focusList) return;
-      focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">Loading...</p>`;
-
-      try {
-        const user = auth.currentUser;
-        if (!user) { focusList.innerHTML = `<p style="color:red;">Not logged in</p>`; return; }
-
-        const userDocRef  = doc(db, "users", user.uid);
-        const userSnap    = await getDoc(userDocRef);
-        const data        = userSnap.exists() ? userSnap.data() : {};
-        const assignments = data.assignments || [];
-
-        if (assignments.length === 0) {
-          focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">No high-priority tasks 🎉</p>`;
-          return;
-        }
-
-        const focus = assignments
-          .filter(a => a.priority === 'high' && !a.completed)
-          .sort((a, b) => {
-            if (!a.due) return 1;
-            if (!b.due) return -1;
-            return new Date(a.due) - new Date(b.due);
-          });
-
-        if (focus.length === 0) {
-          focusList.innerHTML = `<p style="color:#bbb; padding: 0 12px;">No high-priority tasks 🎉</p>`;
-          return;
-        }
-
-        const subjectClasses = {
-          math: 'subject-math', science: 'subject-science', english: 'subject-english',
-          history: 'subject-history', orchestra: 'subject-orchestra', spanish: 'subject-spanish'
-        };
-
-        focusList.innerHTML = '';
-        focus.forEach(a => {
-          const card = document.createElement('div');
-          card.className = 'assignment-card';
-          card.style.cursor = 'pointer';
-
-          const content = document.createElement('div');
-          content.className = 'card-content';
-
-          const title = document.createElement('div');
-          title.className = 'assignment-title';
-          title.textContent = a.title;
-
-          const due = document.createElement('div');
-          due.className = 'assignment-due';
-          due.textContent = a.due ? `Due: ${a.due}` : 'No due date';
-
-          content.appendChild(title);
-          content.appendChild(due);
-
-          const subject  = document.createElement('div');
-          const subjName = a.subject ? a.subject.toLowerCase() : 'math';
-          subject.textContent = subjName.charAt(0).toUpperCase() + subjName.slice(1);
-          subject.className   = 'subject-tag ' + (subjectClasses[subjName] || 'subject-math');
-
-          card.appendChild(content);
-          card.appendChild(subject);
-          card.addEventListener('click', () => { window.location.href = 'notes.html'; });
-          focusList.appendChild(card);
+    function renderAssignments(assignments) {
+      const list = document.getElementById('assignmentList');
+      const pending = assignments
+        .filter(a => !a.completed)
+        .sort((a, b) => {
+          if (!a.due) return 1;
+          if (!b.due) return -1;
+          return new Date(a.due) - new Date(b.due);
         });
 
-      } catch(err) {
-        console.error('Error loading Today\'s Focus:', err);
-        focusList.innerHTML = `<p style="color:red; padding:0 12px;">Error loading tasks</p>`;
+      if (pending.length === 0) {
+        list.innerHTML = '<div class="empty-msg">All caught up \u2014 no pending assignments \uD83C\uDF89</div>';
+        return;
       }
+
+      const priClass = { high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+      list.innerHTML = '';
+
+      pending.forEach(a => {
+        const row = document.createElement('a');
+        row.href = 'notes.html';
+        row.className = 'assignment-row';
+        const subj = a.subject ? a.subject.charAt(0).toUpperCase() + a.subject.slice(1) : '';
+        const pri  = (a.priority || '').toLowerCase();
+        const dateStr = fmtDate(a.due);
+        const urgent  = isUrgent(a.due);
+        row.innerHTML =
+          '<div class="assign-left">' +
+            '<div class="assign-title">' + (a.title || 'Untitled') + '</div>' +
+            (subj ? '<div class="assign-subject">' + subj + '</div>' : '') +
+          '</div>' +
+          '<div class="assign-right">' +
+            (pri ? '<span class="priority-badge ' + (priClass[pri] || 'priority-medium') + '">' + pri + '</span>' : '') +
+            (dateStr ? '<span class="assign-date' + (urgent ? ' urgent' : '') + '">' + dateStr + '</span>' : '') +
+          '</div>';
+        list.appendChild(row);
+      });
     }
 
-    onAuthStateChanged(auth, user => {
+    function renderStats(assignments) {
+      document.getElementById('statTotal').textContent = assignments.filter(a => !a.completed).length;
+      document.getElementById('statHigh').textContent  = assignments.filter(a => (a.priority||'').toLowerCase() === 'high' && !a.completed).length;
+      document.getElementById('statDone').textContent  = assignments.filter(a => a.completed).length;
+    }
+
+    onAuthStateChanged(auth, async user => {
       if (!user) { window.location.href = "index.html"; return; }
-      renderTodaysFocus();
+      const name = user.displayName ? user.displayName.split(' ')[0] : 'there';
+      document.getElementById('username').textContent = name;
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        const data = snap.exists() ? snap.data() : {};
+        const assignments = data.assignments || [];
+        renderStats(assignments);
+        renderAssignments(assignments);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('assignmentList').innerHTML =
+          '<div class="empty-msg" style="color:#ff5252;">Error loading assignments.</div>';
+      }
     });
   </script>
 
