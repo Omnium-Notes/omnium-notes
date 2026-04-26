@@ -449,6 +449,27 @@
       text-transform: uppercase; color: rgba(255,255,255,0.3);
     }
 
+    /* ── Column header labels (Time / Event) ── */
+    .mobile-col-labels {
+      display: flex !important;
+      flex-shrink: 0;
+      padding: 0 0 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .mobile-col-label-time {
+      width: 50px;
+      flex-shrink: 0;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
+      text-align: right; padding-right: 8px;
+    }
+    .mobile-col-label-event {
+      flex: 1;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
+      padding-left: 10px;
+    }
+
     /* ── Scrollable schedule: full 24-hr time grid ── */
     .mobile-schedule {
       display: flex;
@@ -471,9 +492,19 @@
       position: relative;
       min-width: 0;
     }
-    .mgc-hour-row {
+    /* Hour rows in the TIME column have no border — labels float above */
+    .mgc-times .mgc-hour-row {
+      border-top: none;
+    }
+    /* Hour rows in the EVENTS column: line starts at left edge of that column */
+    .mgc-events-col .mgc-hour-row {
       height: var(--mgc-hour);
       border-top: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+      box-sizing: border-box;
+    }
+    .mgc-hour-row {
+      height: var(--mgc-hour);
       position: relative;
       box-sizing: border-box;
     }
@@ -644,8 +675,11 @@
           <button class="mobile-add-btn" id="mobileAddBtn" title="Add event">+</button>
         </div>
 
-        <!-- Mobile: col labels (hidden - now integrated in time grid) -->
-        <div class="mobile-col-labels" id="mobileColLabels" style="display:none;"></div>
+        <!-- Mobile: col labels -->
+        <div class="mobile-col-labels" id="mobileColLabels">
+          <div class="mobile-col-label-time">Time</div>
+          <div class="mobile-col-label-event">Event</div>
+        </div>
 
         <!-- Desktop: assignment banners + time grid -->
         <div class="assignment-banners" id="assignmentBanners"></div>
