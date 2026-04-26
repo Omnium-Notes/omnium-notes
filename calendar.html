@@ -611,6 +611,11 @@
 
     /* Modals full width */
     .event-modal-box, .edit-modal-box { width: calc(100% - 32px); padding: 20px 16px; }
+
+    /* Fix time input overlap on mobile */
+    .modal-row { flex-direction: column; gap: 6px; }
+    .modal-field input, .modal-field select { font-size: 14px; }
+    .modal-row .modal-field { flex: unset; width: 100%; }
   }
 </style>
 </head>
