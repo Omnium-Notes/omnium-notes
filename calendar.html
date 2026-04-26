@@ -612,10 +612,10 @@
     /* Modals full width */
     .event-modal-box, .edit-modal-box { width: calc(100% - 32px); padding: 20px 16px; }
 
-    /* Fix time input overlap on mobile */
-    .modal-row { flex-direction: column; gap: 6px; }
-    .modal-field input, .modal-field select { font-size: 14px; }
-    .modal-row .modal-field { flex: unset; width: 100%; }
+    /* Fix time input overflow on mobile - keep side by side but constrain */
+    .modal-row { gap: 8px; }
+    .modal-row .modal-field { flex: 1; min-width: 0; }
+    .modal-row .modal-field input { width: 100%; font-size: 13px; padding: 8px 6px; text-align: center; }
   }
 </style>
 </head>
