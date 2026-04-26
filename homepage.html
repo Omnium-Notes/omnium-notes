@@ -218,12 +218,40 @@
       .sidebar { display: none; }
       .bottom-nav { display: block; }
       html, body { height: 100%; }
-      .main { margin-left: 0; padding: 24px 16px 80px; }
-      .header h1 { font-size: 26px; }
-      .stats-row { gap: 8px; }
-      .stat-card { padding: 14px 12px; gap: 10px; }
-      .stat-num { font-size: 22px; }
-      .quick-actions { grid-template-columns: 1fr; gap: 10px; }
+
+      .main { margin-left: 0; padding: 20px 14px 84px; }
+
+      .header { margin-bottom: 20px; }
+      .header h1 { font-size: 24px; }
+      .header p { font-size: 13px; }
+
+      /* Stats — stay 3 across, compact */
+      .stats-row { gap: 8px; margin-bottom: 20px; }
+      .stat-card { padding: 12px 10px; gap: 8px; border-radius: 12px; flex-direction: column; align-items: flex-start; }
+      .stat-icon { width: 32px; height: 32px; border-radius: 8px; }
+      .stat-icon .material-symbols-outlined { font-size: 16px; }
+      .stat-num { font-size: 24px; }
+      .stat-label { font-size: 11px; }
+
+      /* Quick actions — stay 3 across */
+      .section-label { font-size: 10px; margin-bottom: 8px; }
+      .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+      .action-card { padding: 14px 10px; border-radius: 12px; }
+      .action-icon { width: 30px; height: 30px; border-radius: 8px; margin-bottom: 10px; }
+      .action-icon .material-symbols-outlined { font-size: 16px; }
+      .action-title { font-size: 12px; margin-bottom: 2px; }
+      .action-desc { font-size: 11px; line-height: 1.35; }
+
+      /* Assignments */
+      .assignments-card { border-radius: 12px; }
+      .assignments-header { padding: 14px 16px 12px; }
+      .assignments-header h3 { font-size: 14px; }
+      .view-all { font-size: 12px; }
+      .assignment-row { padding: 12px 16px; }
+      .assign-title { font-size: 13px; }
+      .assign-subject { font-size: 11px; }
+      .priority-badge { font-size: 10px; padding: 2px 8px; }
+      .assign-date { font-size: 12px; min-width: 44px; }
     }
   </style>
 </head>
