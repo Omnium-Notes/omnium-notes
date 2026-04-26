@@ -274,11 +274,12 @@
     width: 100%; padding: 8px 11px; border: 1px solid var(--border-light);
     border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 16px;
     background: var(--surface2); color: var(--text-primary); outline: none; transition: border-color 0.15s;
+    box-sizing: border-box;
   }
   .modal-field input:focus, .modal-field select:focus { border-color: rgba(255,255,255,0.35); }
   .modal-field select option { background: #222; }
-  .modal-row { display: flex; gap: 10px; }
-  .modal-row .modal-field { flex: 1; }
+  .modal-row { display: flex; gap: 10px; overflow: hidden; }
+  .modal-row .modal-field { flex: 1; min-width: 0; overflow: hidden; }
   .modal-actions, .edit-actions { display: flex; gap: 8px; margin-top: 18px; }
   .modal-save, .edit-save-btn {
     flex: 1; padding: 9px; background: white; color: #111; border: none;
@@ -612,10 +613,16 @@
     /* Modals full width */
     .event-modal-box, .edit-modal-box { width: calc(100% - 32px); padding: 20px 16px; }
 
-    /* Fix time input overflow on mobile - keep side by side but constrain */
-    .modal-row { gap: 8px; }
-    .modal-row .modal-field { flex: 1; min-width: 0; }
-    .modal-row .modal-field input { width: 100%; font-size: 13px; padding: 8px 6px; text-align: center; }
+    /* Fix time input overflow on mobile - constrain properly */
+    .modal-row { gap: 6px; }
+    .modal-row .modal-field input[type="time"] {
+      font-size: 13px;
+      padding: 8px 4px;
+      text-align: center;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
   }
 </style>
 </head>
