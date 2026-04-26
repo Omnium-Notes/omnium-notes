@@ -332,6 +332,7 @@
 
   /* Mobile-only elements hidden on desktop */
   .mobile-week-strip,
+  .mobile-assignments,
   .mobile-schedule-header,
   .mobile-col-labels,
   .mobile-schedule { display: none; }
@@ -443,6 +444,32 @@
     .mobile-col-label-event {
       flex: 1; font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
       text-transform: uppercase; color: rgba(255,255,255,0.3);
+    }
+
+    /* ── Assignments due today strip ── */
+    .mobile-assignments {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+    .mobile-assignments:not(:empty) { display: flex; }
+    .mobile-assignment-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 12px; border-radius: 10px;
+    }
+    .mobile-assignment-dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    }
+    .mobile-assignment-title {
+      flex: 1; font-size: 12px; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mobile-assignment-subject {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; opacity: 0.65;
     }
 
     /* ── Column header labels (Time / Event) ── */
@@ -664,6 +691,9 @@
 
         <!-- Mobile: week strip -->
         <div class="mobile-week-strip" id="mobileWeekStrip"></div>
+
+        <!-- Mobile: assignments due today (between week strip and schedule) -->
+        <div class="mobile-assignments" id="mobileAssignments"></div>
 
         <!-- Mobile: schedule header -->
         <div class="mobile-schedule-header" id="mobileSchedHeader" style="display:none;">
@@ -1055,25 +1085,21 @@
       eventsCol.appendChild(bar);
     });
 
-    // Assignment due-today pills at top of events column (all-day area)
-    if (assignEvs.length > 0) {
-      const allDay = document.createElement('div');
-      allDay.style.cssText = `
-        position: sticky; top: 0; z-index: 30;
-        background: #0f0f0f;
-        border-bottom: 1px solid rgba(255,255,255,0.07);
-        padding: 6px 6px 6px 4px;
-        display: flex; flex-wrap: wrap; gap: 4px;
+    // Render assignments into the dedicated container above the schedule
+    const assignContainer = document.getElementById('mobileAssignments');
+    assignContainer.innerHTML = '';
+    assignEvs.forEach(ev => {
+      const c = SUBJECT_COLORS[ev.subject] || '#aaa';
+      const row = document.createElement('div');
+      row.className = 'mobile-assignment-row';
+      row.style.cssText = `background:${c}14;border:1px dashed ${c}44;color:${c};${ev.completed ? 'opacity:0.4;text-decoration:line-through;' : ''}`;
+      row.innerHTML = `
+        <div class="mobile-assignment-dot" style="background:${c};"></div>
+        <div class="mobile-assignment-title">${ev.title}</div>
+        <div class="mobile-assignment-subject">${ev.subject || ''}</div>
       `;
-      assignEvs.forEach(ev => {
-        const c = SUBJECT_COLORS[ev.subject] || '#aaa';
-        const pill = document.createElement('div');
-        pill.style.cssText = `display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;background:${c}18;border:1px dashed ${c}55;${ev.completed ? 'opacity:0.4;text-decoration:line-through;' : ''}`;
-        pill.innerHTML = `<div style="width:5px;height:5px;border-radius:50%;background:${c};flex-shrink:0;"></div><span style="font-size:10px;font-weight:600;color:${c};">${ev.title}</span>`;
-        allDay.appendChild(pill);
-      });
-      sched.appendChild(allDay);
-    }
+      assignContainer.appendChild(row);
+    });
 
     sched.appendChild(timesCol);
     sched.appendChild(eventsCol);
