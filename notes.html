@@ -6,7 +6,7 @@
   <title>Assignments & Subjects</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -15,10 +15,9 @@
       font-family: "Inter", sans-serif; min-height: 100vh; overflow-x: hidden;
     }
 
-    /* ── SIDEBAR (desktop only) ── */
+    /* ── SIDEBAR ── */
     .menu-box {
-      padding: 12px 8px; height: 100vh; width: 64px;
-      background-color: #111;
+      padding: 12px 8px; height: 100vh; width: 64px; background-color: #111;
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex; flex-direction: column; gap: 4px;
       overflow: hidden; position: fixed; top: 0; left: 0; z-index: 200;
@@ -48,7 +47,7 @@
     }
     .label {
       font-family: "DM Sans", sans-serif; font-size: 15px; font-weight: 400;
-      letter-spacing: 0.01em; opacity: 0; transform: translateX(-6px);
+      opacity: 0; transform: translateX(-6px);
       transition: opacity 0.15s ease, transform 0.15s ease;
       transition-delay: 0s; pointer-events: none;
     }
@@ -56,23 +55,18 @@
     .nav-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 8px; flex-shrink: 0; }
     .spacer { flex: 1; }
 
-    /* ── BOTTOM NAV (mobile only) ── */
+    /* ── BOTTOM NAV ── */
     .bottom-nav {
-      display: none;
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
       background: #111; border-top: 1px solid rgba(255,255,255,0.08);
       height: 64px; padding-bottom: env(safe-area-inset-bottom);
     }
-    .bottom-nav-inner {
-      display: flex; align-items: center; justify-content: space-around;
-      height: 64px;
-    }
+    .bottom-nav-inner { display: flex; align-items: center; justify-content: space-around; height: 64px; }
     .bottom-nav-item {
       display: flex; align-items: center; justify-content: center;
       flex: 1; text-decoration: none; color: rgba(255,255,255,0.5);
       padding: 8px 0; transition: color 0.2s ease; cursor: pointer;
     }
-    .bottom-nav-item span.label-text { display: none; }
     .bottom-nav-item.active { color: white; }
     .bottom-nav-item .material-symbols-outlined {
       font-size: 30px;
@@ -84,7 +78,6 @@
 
     /* ── MAIN ── */
     .main-content { margin-left: 64px; min-height: 100vh; display: flex; flex-direction: column; }
-
     .top-bar {
       display: flex; justify-content: flex-end; align-items: center;
       padding: 20px 20px 0 20px; gap: 12px;
@@ -134,7 +127,6 @@
     .assignment-title { font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .assignment-due   { font-size: 14px; color: #ccc; }
 
-    /* ── CHECKBOX — fully clickable including checkmark ── */
     .checkbox-wrapper {
       position: relative; width: 34px; height: 34px; flex-shrink: 0;
       margin-right: 8px; cursor: pointer;
@@ -144,25 +136,15 @@
       width: 25px; height: 25px; border-radius: 5px;
       background: #222; border: 2px solid white;
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s ease, border-color 0.2s ease;
-      pointer-events: none;
+      transition: background 0.2s ease, border-color 0.2s ease; pointer-events: none;
     }
-    .checkbox-wrapper.checked-js .cb-box {
-      background: #4CAF50; border-color: #4CAF50;
-    }
-    .checkbox-wrapper .cb-check {
-      color: white; font-size: 16px; font-weight: bold; line-height: 1;
-      display: none; pointer-events: none;
-    }
+    .checkbox-wrapper.checked-js .cb-box { background: #4CAF50; border-color: #4CAF50; }
+    .checkbox-wrapper .cb-check { color: white; font-size: 16px; font-weight: bold; line-height: 1; display: none; pointer-events: none; }
     .checkbox-wrapper.checked-js .cb-check { display: block; }
-
     .assignment-card.completed { opacity: 0.6; background: #111; }
     .assignment-card.completed .card-content { text-decoration: line-through; text-decoration-color: #B90101; }
 
-    .priority-select {
-      background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px;
-      font-size: 13px; flex-shrink: 0;
-    }
+    .priority-select { background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px; font-size: 13px; flex-shrink: 0; }
     .priority-low    { border-color: #4CAF50; color: #4CAF50; }
     .priority-medium { border-color: #FFD54A; color: #FFD54A; }
     .priority-high   { border-color: #B90101; color: #B90101; }
@@ -174,10 +156,7 @@
     .edit-button img { width: 36px; height: 36px; display: block; }
     .edit-button:hover { transform: scale(1.08); }
 
-    .subject-select {
-      background: #111; color: white; border: 2px solid #555; border-radius: 8px;
-      padding: 6px 8px; font-size: 13px; flex-shrink: 0;
-    }
+    .subject-select { background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px; font-size: 13px; flex-shrink: 0; }
     .subject-math      { background-color: #d50000; border-color: #d50000; color: white; }
     .subject-science   { background-color: #4285f4; border-color: #4285f4; color: white; }
     .subject-english   { background-color: #0dd000; border-color: #0dd000; color: black; }
@@ -202,25 +181,119 @@
     .orchestra { background-color: #7e00d2; }
     .spanish   { background-color: #ff9900; }
 
-    /* ── MODAL ── */
+    /* ══════════════════════
+       MODAL — new style
+    ══════════════════════ */
     .modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: none; justify-content: center; align-items: center;
-      background: rgba(0,0,0,0.95); z-index: 1000;
+      background: rgba(0,0,0,0.75); z-index: 1000;
+      backdrop-filter: blur(4px);
     }
     .modal-content {
-      background: #000; border: 2px solid #FFD54A; border-radius: 20px;
-      width: 90%; max-width: 400px; padding: 30px; color: white;
-      display: flex; flex-direction: column; gap: 20px; text-align: left;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      width: 90%; max-width: 400px;
+      padding: 28px;
+      color: white;
+      display: flex; flex-direction: column; gap: 20px;
+      position: relative;
     }
-    .modal-content input, .modal-content select {
-      padding: 12px; border-radius: 10px; border: 2px solid #FFD54A;
-      background: #111; color: white; font-size: 16px;
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.08); border: none; border-radius: 50%;
+      width: 28px; height: 28px; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
     }
-    .modal-buttons { display: flex; justify-content: space-between; gap: 10px; }
-    .modal-buttons button { flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 15px; }
-    .modal-buttons button:first-child { background: #FFD54A; color: #000; }
-    .modal-buttons button:last-child  { background: #B90101; color: white; }
+    .modal-close:hover { background: rgba(255,255,255,0.14); color: white; }
+
+    .modal-field { display: flex; flex-direction: column; gap: 8px; }
+    .modal-field-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: rgba(255,213,74,0.75);
+    }
+
+    .modal-content input[type="text"],
+    .modal-content select {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px; color: white;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      appearance: none; -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+    .modal-content input[type="text"]::placeholder { color: rgba(255,255,255,0.25); }
+    .modal-content input[type="text"]:focus,
+    .modal-content select:focus { border-color: rgba(255,213,74,0.4); }
+
+    /* date input with icon */
+    .modal-date-wrap { position: relative; }
+    .modal-date-wrap .cal-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.3); font-size: 18px; pointer-events: none;
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .modal-date-wrap input { padding-left: 40px !important; }
+
+    /* select arrow */
+    .modal-select-wrap { position: relative; }
+    .modal-select-wrap::after {
+      content: ""; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent; border-right: 5px solid transparent;
+      border-top: 5px solid rgba(255,255,255,0.3); pointer-events: none;
+    }
+    .modal-content select option { background: #1a1a1a; color: white; }
+
+    /* priority buttons */
+    .priority-toggle { display: flex; gap: 8px; }
+    .priority-btn {
+      flex: 1; padding: 10px 0; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #1a1a1a; color: rgba(255,255,255,0.55);
+      font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    }
+    .priority-btn:hover { border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.8); }
+    .priority-btn.active-high {
+      border: 1.5px solid #ff5252;
+      background: rgba(185,0,0,0.15);
+      color: #ff5252;
+    }
+    .priority-btn.active-medium {
+      border: 1.5px solid #FFD54A;
+      background: rgba(255,213,74,0.1);
+      color: #FFD54A;
+    }
+    .priority-btn.active-low {
+      border: 1.5px solid #4CAF50;
+      background: rgba(76,175,80,0.12);
+      color: #4CAF50;
+    }
+
+    /* action buttons */
+    .modal-buttons { display: flex; gap: 10px; margin-top: 4px; }
+    .modal-buttons button {
+      flex: 1; padding: 13px; border-radius: 12px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; border: none; transition: background 0.15s;
+    }
+    #hideAssignment {
+      background: #1a1a1a; color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    #hideAssignment:hover { background: #222; }
+    #addAssignment { background: #FFD54A; color: #000; }
+    #addAssignment:hover { background: #ffe070; }
 
     /* ── FLATPICKR ── */
     .flatpickr-calendar { background: #000 !important; border: 1px solid #FFD54A !important; color: #FFD54A !important; box-shadow: none !important; }
@@ -236,52 +309,36 @@
 
     /* ── MOBILE ── */
     @media (max-width: 600px) {
-      /* hide sidebar, show bottom nav */
       .menu-box { display: none; }
       .bottom-nav { display: block; }
-      .main-content {
-        margin-left: 0;
-        padding-bottom: calc(64px + env(safe-area-inset-bottom));
-      }
-
+      .main-content { margin-left: 0; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
       .top-bar { padding: 14px 14px 0 14px; gap: 8px; }
-
       .toggle-container .container { width: 80px; height: 40px; }
       .toggle-container .circle { width: 32px; height: 32px; }
       .toggle-container .material-symbols-outlined { font-size: 23px; }
-
       .add-button { height: 40px; font-size: 14px; padding: 0 12px; }
-
       .assignment-list { padding: 0 12px; }
       .assignment-card { padding: 10px 10px; gap: 6px; border-radius: 10px; }
-
       .assignment-title { font-size: 14px; }
       .assignment-due   { font-size: 12px; }
-
-      .subject-select  { font-size: 11px; padding: 5px 5px; border-radius: 6px; border-width: 1.5px; max-width: 80px; }
-      .priority-select { font-size: 11px; padding: 5px 5px; border-radius: 6px; border-width: 1.5px; max-width: 68px; }
-
+      .subject-select  { font-size: 11px; padding: 5px; border-radius: 6px; border-width: 1.5px; max-width: 80px; }
+      .priority-select { font-size: 11px; padding: 5px; border-radius: 6px; border-width: 1.5px; max-width: 68px; }
       .edit-button img { width: 28px; height: 28px; }
-
       .checkbox-wrapper { width: 30px; height: 30px; margin-right: 4px; }
       .checkbox-wrapper .cb-box { width: 22px; height: 22px; }
       .checkbox-wrapper .cb-check { font-size: 14px; }
-
       .app-grid { gap: 8px; padding: 8px; margin-top: 20px; }
       .app-grid button { font-size: 17px; border-radius: 16px; }
-
-      .modal-content { padding: 22px 18px; gap: 14px; }
-      .modal-content input, .modal-content select { padding: 10px; font-size: 15px; }
+      .modal-content { padding: 22px 18px; gap: 16px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR (desktop) ── -->
 <div class="menu-box" id="menu-box">
   <div class="menu-item menu-toggle" id="menu-toggle">
     <span class="material-symbols-outlined">menu</span>
-    <span class="label" style="font-size:17px; font-weight:500; color:white;">Menu</span>
+    <span class="label" style="font-size:17px;font-weight:500;color:white;">Menu</span>
   </div>
   <a href="homepage.html" class="menu-item">
     <span class="material-symbols-outlined">home</span>
@@ -307,28 +364,16 @@
   </a>
 </div>
 
-<!-- ── BOTTOM NAV (mobile) ── -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <a href="homepage.html" class="bottom-nav-item">
-      <span class="material-symbols-outlined">home</span>
-    </a>
-    <a href="calendar.html" class="bottom-nav-item">
-      <span class="material-symbols-outlined">calendar_month</span>
-    </a>
-    <a href="notes.html" class="bottom-nav-item active">
-      <span class="material-symbols-outlined">assignment</span>
-    </a>
-    <a href="clock.html" class="bottom-nav-item">
-      <span class="material-symbols-outlined">timer</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item">
-      <span class="material-symbols-outlined">settings</span>
-    </a>
+    <a href="homepage.html" class="bottom-nav-item"><span class="material-symbols-outlined">home</span></a>
+    <a href="calendar.html" class="bottom-nav-item"><span class="material-symbols-outlined">calendar_month</span></a>
+    <a href="notes.html" class="bottom-nav-item active"><span class="material-symbols-outlined">assignment</span></a>
+    <a href="clock.html" class="bottom-nav-item"><span class="material-symbols-outlined">timer</span></a>
+    <a href="settings.html" class="bottom-nav-item"><span class="material-symbols-outlined">settings</span></a>
   </div>
 </nav>
 
-<!-- ── MAIN CONTENT ── -->
 <div class="main-content">
   <div class="top-bar">
     <div class="toggle-container">
@@ -338,7 +383,7 @@
         <div class="circle"></div>
       </div>
     </div>
-    <button class="add-button" id="addAssignmentBtn" onclick="showModal()">+ Add Assignment</button>
+    <button class="add-button" id="addAssignmentBtn" onclick="showModal()">+ Add New</button>
   </div>
 
   <div class="view-container">
@@ -358,32 +403,54 @@
   </div>
 </div>
 
-<!-- ── MODAL ── -->
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
-    <label>Title</label>
-    <input type="text" id="assignment-title" />
-    <label>Due Date</label>
-    <input type="text" id="assignment-due" placeholder="Select a due date" />
-    <label>Subject</label>
-    <select id="assignment-subject">
-      <option value="math">Math</option>
-      <option value="science">Science</option>
-      <option value="english">English</option>
-      <option value="history">History</option>
-      <option value="orchestra">Orchestra</option>
-      <option value="spanish">Spanish</option>
-    </select>
-    <label>Priority</label>
-    <select id="assignment-priority">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-    <div class="modal-buttons">
-      <button id="addAssignment" onclick="addAssignmentFromModal()">Save</button>
-      <button id="hideAssignment" onclick="hideModal()">Cancel</button>
+
+    <button class="modal-close" onclick="hideModal()">✕</button>
+
+    <div class="modal-field">
+      <span class="modal-field-label">Title</span>
+      <input type="text" id="assignment-title" placeholder="e.g. Chapter 5 Review Questions" />
     </div>
+
+    <div class="modal-field">
+      <span class="modal-field-label">Due Date</span>
+      <div class="modal-date-wrap">
+        <span class="material-symbols-outlined cal-icon">calendar_month</span>
+        <input type="text" id="assignment-due" placeholder="Pick a date" />
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <span class="modal-field-label">Priority</span>
+      <div class="priority-toggle">
+        <button class="priority-btn" id="pri-high"   onclick="setPriority('high')">High</button>
+        <button class="priority-btn" id="pri-medium" onclick="setPriority('medium')">Medium</button>
+        <button class="priority-btn" id="pri-low"    onclick="setPriority('low')">Low</button>
+      </div>
+    </div>
+
+    <div class="modal-field">
+      <span class="modal-field-label">Subject</span>
+      <div class="modal-select-wrap">
+        <select id="assignment-subject">
+          <option value="" disabled selected>Select a subject</option>
+          <option value="math">Math</option>
+          <option value="science">Science</option>
+          <option value="english">English</option>
+          <option value="history">History</option>
+          <option value="orchestra">Orchestra</option>
+          <option value="spanish">Spanish</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="hideAssignment" onclick="hideModal()">Cancel</button>
+      <button id="addAssignment"  onclick="addAssignmentFromModal()">Add Assignment</button>
+    </div>
+
   </div>
 </div>
 
@@ -412,11 +479,9 @@
   let userDocRef = null;
   const list = document.getElementById('assignment-list');
   let editingAssignment = null;
+  let currentPriority = 'medium';
 
-  const MONTH_IDX = {
-    Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,
-    Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11
-  };
+  const MONTH_IDX = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
 
   function dueDateToKey(dateStr) {
     if (!dateStr) return null;
@@ -442,14 +507,7 @@
       const key = dueDateToKey(a.due);
       if (!key) return;
       if (!calendarEvents[key]) calendarEvents[key] = [];
-      calendarEvents[key].push({
-        fromAssignment: true,
-        assignmentId:   a.id,
-        title:          a.title,
-        subject:        a.subject,
-        priority:       a.priority,
-        completed:      a.completed,
-      });
+      calendarEvents[key].push({ fromAssignment: true, assignmentId: a.id, title: a.title, subject: a.subject, priority: a.priority, completed: a.completed });
     });
     await updateDoc(userDocRef, { calendarEvents: deleteField() });
     await setDoc(userDocRef, { calendarEvents }, { merge: true });
@@ -460,8 +518,8 @@
     userDocRef = doc(db, "users", user.uid);
     const snap = await getDoc(userDocRef);
     const data = snap.exists() ? snap.data() : {};
-    assignments     = data.assignments     || [];
-    calendarEvents  = data.calendarEvents  || {};
+    assignments    = data.assignments    || [];
+    calendarEvents = data.calendarEvents || {};
     let needsSave = false;
     assignments.forEach(a => { if (!a.id) { a.id = crypto.randomUUID(); needsSave = true; } });
     if (needsSave) await saveAssignments();
@@ -471,20 +529,15 @@
   function initDatePicker() {
     flatpickr("#assignment-due", { dateFormat: "M d, Y", minDate: "today", allowInput: true });
   }
-
   document.addEventListener("DOMContentLoaded", initDatePicker);
 
-  document.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      const modal = document.getElementById('modal');
-      if (modal.style.display === 'flex') {
-        event.preventDefault();
-        const title    = document.getElementById("assignment-title").value.trim();
-        const due      = document.getElementById("assignment-due").value.trim();
-        const priority = document.getElementById("assignment-priority").value.trim();
-        if (title && due && priority) document.getElementById("addAssignment").click();
-        else document.getElementById("hideAssignment").click();
-      }
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && document.getElementById('modal').style.display === 'flex') {
+      e.preventDefault();
+      const title = document.getElementById("assignment-title").value.trim();
+      const due   = document.getElementById("assignment-due").value.trim();
+      if (title && due) document.getElementById("addAssignment").click();
+      else document.getElementById("hideAssignment").click();
     }
   });
 
@@ -503,17 +556,26 @@
     });
   }
 
+  window.setPriority = function(p) {
+    currentPriority = p;
+    ['high','medium','low'].forEach(k => {
+      const btn = document.getElementById('pri-' + k);
+      btn.classList.remove('active-high','active-medium','active-low');
+      if (p && k === p) btn.classList.add('active-' + k);
+    });
+  }
+
   window.showModal = function() {
     editingAssignment = null;
     document.getElementById('assignment-title').value = '';
     document.getElementById('assignment-due').value = '';
-    document.getElementById('assignment-priority').value = 'low';
-    document.getElementById('assignment-subject').value = 'math';
+    document.getElementById('assignment-subject').value = '';
+    setPriority(null);
     initDatePicker();
-    const addBtn    = document.getElementById('addAssignment');
+    const addBtn = document.getElementById('addAssignment');
     const cancelBtn = document.getElementById('hideAssignment');
-    addBtn.textContent    = 'Save';   addBtn.onclick    = addAssignmentFromModal;
-    cancelBtn.textContent = 'Cancel'; cancelBtn.onclick = hideModal;
+    addBtn.textContent = 'Add Assignment'; addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Cancel'; cancelBtn.style.color = ''; cancelBtn.onclick = hideModal;
     document.getElementById('modal').style.display = 'flex';
   }
 
@@ -521,13 +583,13 @@
     document.getElementById('modal').style.display = 'none';
     document.getElementById('assignment-title').value = '';
     document.getElementById('assignment-due').value = '';
-    document.getElementById('assignment-priority').value = 'low';
-    document.getElementById('assignment-subject').value = 'math';
+    document.getElementById('assignment-subject').value = '';
+    setPriority(null);
     editingAssignment = null;
-    const addBtn    = document.getElementById('addAssignment');
+    const addBtn = document.getElementById('addAssignment');
     const cancelBtn = document.getElementById('hideAssignment');
-    addBtn.textContent    = 'Save';   addBtn.onclick    = addAssignmentFromModal;
-    cancelBtn.textContent = 'Cancel'; cancelBtn.onclick = hideModal;
+    addBtn.textContent = 'Add Assignment'; addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Cancel'; cancelBtn.style.color = ''; cancelBtn.onclick = hideModal;
   }
 
   document.getElementById('modal').addEventListener('click', e => {
@@ -535,22 +597,20 @@
   });
 
   window.addAssignmentFromModal = async function() {
-    const title    = document.getElementById('assignment-title').value.trim();
-    const due      = document.getElementById('assignment-due').value.trim();
-    const priority = document.getElementById('assignment-priority').value;
-    const subject  = document.getElementById('assignment-subject').value;
-    if (!title || !due) { alert('Fill all fields'); return; }
+    const title   = document.getElementById('assignment-title').value.trim();
+    const due     = document.getElementById('assignment-due').value.trim();
+    const subject = document.getElementById('assignment-subject').value;
+    if (!title || !due) { alert('Please fill in title and due date.'); return; }
 
     if (editingAssignment) {
       editingAssignment.title    = title;
       editingAssignment.due      = due;
-      editingAssignment.priority = priority;
+      editingAssignment.priority = currentPriority;
       editingAssignment.subject  = subject;
       editingAssignment = null;
     } else {
-      assignments.push({ id: crypto.randomUUID(), title, due, priority, subject, completed: false });
+      assignments.push({ id: crypto.randomUUID(), title, due, priority: currentPriority, subject, completed: false });
     }
-
     await saveAssignments();
     await syncCalendarEvents();
     renderAssignments();
@@ -572,30 +632,20 @@
     card.className = 'assignment-card';
     if (a.completed) card.classList.add('completed');
 
-    // ── Checkbox — entire div is the click target ──
     const cbWrap = document.createElement('div');
     cbWrap.className = 'checkbox-wrapper';
     if (a.completed) cbWrap.classList.add('checked-js');
-
-    const cbBox = document.createElement('div');
-    cbBox.className = 'cb-box';
-    const cbCheck = document.createElement('span');
-    cbCheck.className = 'cb-check';
-    cbCheck.textContent = '✓';
-    cbBox.appendChild(cbCheck);
-    cbWrap.appendChild(cbBox);
-
-    // Click anywhere on the wrapper toggles completion
+    const cbBox = document.createElement('div'); cbBox.className = 'cb-box';
+    const cbCheck = document.createElement('span'); cbCheck.className = 'cb-check'; cbCheck.textContent = '✓';
+    cbBox.appendChild(cbCheck); cbWrap.appendChild(cbBox);
     cbWrap.addEventListener('click', () => toggleCompleted(cbWrap, a));
 
-    const content = document.createElement('div');
-    content.className = 'card-content';
+    const content = document.createElement('div'); content.className = 'card-content';
     const t = document.createElement('div'); t.className = 'assignment-title'; t.textContent = a.title;
     const d = document.createElement('div'); d.className = 'assignment-due'; d.textContent = 'Due ' + a.due;
     content.appendChild(t); content.appendChild(d);
 
-    const subjectSelect = document.createElement('select');
-    subjectSelect.className = 'subject-select';
+    const subjectSelect = document.createElement('select'); subjectSelect.className = 'subject-select';
     ['math','science','english','history','orchestra','spanish'].forEach(subj => {
       const o = document.createElement('option');
       o.value = subj; o.textContent = subj.charAt(0).toUpperCase() + subj.slice(1);
@@ -603,15 +653,9 @@
       subjectSelect.appendChild(o);
     });
     updateSubjectColor(subjectSelect);
-    subjectSelect.onchange = async () => {
-      a.subject = subjectSelect.value;
-      updateSubjectColor(subjectSelect);
-      await saveAssignments();
-      await syncCalendarEvents();
-    };
+    subjectSelect.onchange = async () => { a.subject = subjectSelect.value; updateSubjectColor(subjectSelect); await saveAssignments(); await syncCalendarEvents(); };
 
-    const prioritySelect = document.createElement('select');
-    prioritySelect.className = 'priority-select';
+    const prioritySelect = document.createElement('select'); prioritySelect.className = 'priority-select';
     ['low','medium','high'].forEach(opt => {
       const o = document.createElement('option');
       o.value = opt; o.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
@@ -619,20 +663,11 @@
       prioritySelect.appendChild(o);
     });
     updatePriorityColor(prioritySelect);
-    prioritySelect.onchange = async () => {
-      a.priority = prioritySelect.value;
-      updatePriorityColor(prioritySelect);
-      await saveAssignments();
-      await syncCalendarEvents();
-      renderAssignments();
-    };
+    prioritySelect.onchange = async () => { a.priority = prioritySelect.value; updatePriorityColor(prioritySelect); await saveAssignments(); await syncCalendarEvents(); renderAssignments(); };
 
-    const editBtn = document.createElement('button');
-    editBtn.className = 'edit-button';
-    const icon = document.createElement('img');
-    icon.src = 'edit1.png'; icon.alt = 'Edit';
-    editBtn.appendChild(icon);
-    editBtn.onclick = () => openEditModal(a);
+    const editBtn = document.createElement('button'); editBtn.className = 'edit-button';
+    const icon = document.createElement('img'); icon.src = 'edit1.png'; icon.alt = 'Edit';
+    editBtn.appendChild(icon); editBtn.onclick = () => openEditModal(a);
 
     card.appendChild(cbWrap); card.appendChild(content);
     card.appendChild(subjectSelect); card.appendChild(prioritySelect); card.appendChild(editBtn);
@@ -644,16 +679,13 @@
     const card = cbWrap.closest('.assignment-card');
     card.classList.toggle('completed', assignment.completed);
     cbWrap.classList.toggle('checked-js', assignment.completed);
-    await saveAssignments();
-    await syncCalendarEvents();
-    renderAssignments();
+    await saveAssignments(); await syncCalendarEvents(); renderAssignments();
   }
 
   function updateSubjectColor(select) {
     select.classList.remove('subject-math','subject-science','subject-english','subject-history','subject-orchestra','subject-spanish');
     select.classList.add('subject-' + select.value);
   }
-
   function updatePriorityColor(select) {
     select.classList.remove('priority-low','priority-medium','priority-high');
     select.classList.add('priority-' + select.value);
@@ -661,23 +693,23 @@
 
   function openEditModal(assignment) {
     editingAssignment = assignment;
-    document.getElementById('assignment-title').value    = assignment.title;
-    document.getElementById('assignment-due').value      = assignment.due;
-    document.getElementById('assignment-priority').value = assignment.priority;
-    document.getElementById('assignment-subject').value  = assignment.subject;
+    document.getElementById('assignment-title').value   = assignment.title;
+    document.getElementById('assignment-due').value     = assignment.due;
+    document.getElementById('assignment-subject').value = assignment.subject;
+    setPriority(assignment.priority || null);
     initDatePicker();
-    const addBtn    = document.getElementById('addAssignment');
+    const addBtn = document.getElementById('addAssignment');
     const cancelBtn = document.getElementById('hideAssignment');
-    addBtn.textContent    = 'Save';   addBtn.onclick    = addAssignmentFromModal;
-    cancelBtn.textContent = 'Delete'; cancelBtn.onclick = () => deleteAssignment(assignment);
+    addBtn.textContent = 'Save'; addBtn.onclick = addAssignmentFromModal;
+    cancelBtn.textContent = 'Delete'; cancelBtn.style.color = '#ff5252'; cancelBtn.onclick = () => deleteAssignment(assignment);
     document.getElementById('modal').style.display = 'flex';
   }
 
   // VIEW TOGGLE
-  const toggleEl         = document.getElementById('viewToggle');
-  const circleEl         = toggleEl.querySelector('.circle');
-  const checkIconEl      = document.getElementById('checkicon');
-  const bookIconEl       = document.getElementById('bookicon');
+  const toggleEl = document.getElementById('viewToggle');
+  const circleEl = toggleEl.querySelector('.circle');
+  const checkIconEl = document.getElementById('checkicon');
+  const bookIconEl  = document.getElementById('bookicon');
   const assignmentsPage  = document.getElementById('assignmentsPage');
   const subjectsPage     = document.getElementById('subjectsPage');
   const addAssignmentBtn = document.getElementById('addAssignmentBtn');
@@ -686,24 +718,17 @@
   function togglePages() {
     onSubjects = !onSubjects;
     if (onSubjects) {
-      circleEl.style.left     = '50px';
-      checkIconEl.style.color = '#a2a2a2';
-      bookIconEl.style.color  = 'white';
-      assignmentsPage.classList.remove('active');
-      subjectsPage.classList.add('active');
+      circleEl.style.left = '50px'; checkIconEl.style.color = '#a2a2a2'; bookIconEl.style.color = 'white';
+      assignmentsPage.classList.remove('active'); subjectsPage.classList.add('active');
       addAssignmentBtn.style.display = 'none';
     } else {
-      circleEl.style.left     = '4px';
-      checkIconEl.style.color = 'white';
-      bookIconEl.style.color  = '#a2a2a2';
-      subjectsPage.classList.remove('active');
-      assignmentsPage.classList.add('active');
+      circleEl.style.left = '4px'; checkIconEl.style.color = 'white'; bookIconEl.style.color = '#a2a2a2';
+      subjectsPage.classList.remove('active'); assignmentsPage.classList.add('active');
       addAssignmentBtn.style.display = 'flex';
     }
   }
   toggleEl.addEventListener('click', togglePages);
 
-  // SIDEBAR TOGGLE (desktop only)
   document.getElementById('menu-toggle').addEventListener('click', () => {
     document.getElementById('menu-box').classList.toggle('expanded');
   });
