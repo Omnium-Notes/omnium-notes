@@ -119,18 +119,51 @@
     /* ── ASSIGNMENT CARDS ── */
     .assignment-list { padding: 0 20px; }
     .assignment-card {
-      background: #222; border-radius: 12px; padding: 12px 15px;
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 12px; transition: transform 0.35s ease, opacity 0.35s ease; gap: 10px;
+      background: #161616;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 15px;
+      display: flex; align-items: center;
+      gap: 10px;
+      transition: background 0.15s, opacity 0.35s ease;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
-    .card-content { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; }
-    .assignment-title { font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .assignment-due   { font-size: 14px; color: #ccc; }
 
+    .assignment-card:hover { background: #1c1c1c; }
+    .card-content { display: flex; flex-direction: column; gap: 3px; flex-grow: 1; min-width: 0; }
+    .assignment-title {
+      font-size: 15px; font-weight: 600; color: white;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .assignment-subject-label {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* right side: badge + date + edit */
+    .card-right {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .priority-badge {
+      font-size: 12px; font-weight: 600; padding: 3px 10px;
+      border-radius: 20px; font-family: 'DM Sans', sans-serif;
+    }
+    .badge-high   { background: rgba(185,0,0,0.25);   color: #ff5252; }
+    .badge-medium { background: rgba(255,213,74,0.18); color: #FFD54A; }
+    .badge-low    { background: rgba(76,175,80,0.18);  color: #4CAF50; }
+
+    .card-due {
+      font-size: 13px; font-family: 'DM Sans', sans-serif;
+      color: rgba(255,255,255,0.45); min-width: 52px; text-align: right;
+    }
+    .card-due.urgent { color: #ff5252; font-weight: 600; }
+
+    /* checkbox */
     .checkbox-wrapper {
-      position: relative; width: 34px; height: 34px; flex-shrink: 0;
-      margin-right: 8px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      position: relative; width: 32px; height: 32px; flex-shrink: 0;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      margin-right: 3px;
     }
     .checkbox-wrapper .cb-box {
       width: 25px; height: 25px; border-radius: 5px;
@@ -141,28 +174,17 @@
     .checkbox-wrapper.checked-js .cb-box { background: #4CAF50; border-color: #4CAF50; }
     .checkbox-wrapper .cb-check { color: white; font-size: 16px; font-weight: bold; line-height: 1; display: none; pointer-events: none; }
     .checkbox-wrapper.checked-js .cb-check { display: block; }
-    .assignment-card.completed { opacity: 0.6; background: #111; }
-    .assignment-card.completed .card-content { text-decoration: line-through; text-decoration-color: #B90101; }
 
-    .priority-select { background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px; font-size: 13px; flex-shrink: 0; }
-    .priority-low    { border-color: #4CAF50; color: #4CAF50; }
-    .priority-medium { border-color: #FFD54A; color: #FFD54A; }
-    .priority-high   { border-color: #B90101; color: #B90101; }
+    .assignment-card.completed { opacity: 0.45; }
+    .assignment-card.completed .assignment-title { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.3); }
 
     .edit-button {
-      background: none; border: none; cursor: pointer; padding: 5px; flex-shrink: 0;
-      transition: transform 0.15s ease; display: flex; align-items: center; justify-content: center;
+      background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0;
+      transition: opacity 0.15s; display: flex; align-items: center; justify-content: center;
+      opacity: 0.6;
     }
-    .edit-button img { width: 36px; height: 36px; display: block; }
-    .edit-button:hover { transform: scale(1.08); }
-
-    .subject-select { background: #111; color: white; border: 2px solid #555; border-radius: 8px; padding: 6px 8px; font-size: 13px; flex-shrink: 0; }
-    .subject-math      { background-color: #d50000; border-color: #d50000; color: white; }
-    .subject-science   { background-color: #4285f4; border-color: #4285f4; color: white; }
-    .subject-english   { background-color: #0dd000; border-color: #0dd000; color: black; }
-    .subject-history   { background-color: #ffd54a; border-color: #ffd54a; color: black; }
-    .subject-orchestra { background-color: #7e00d2; border-color: #7e00d2; color: white; }
-    .subject-spanish   { background-color: #ff9900; border-color: #ff9900; color: black; }
+    .edit-button:hover { opacity: 1; }
+    .edit-button img { width: 30px; height: 30px; display: block; }
 
     /* ── SUBJECT GRID ── */
     .app-grid {
@@ -318,12 +340,12 @@
       .toggle-container .material-symbols-outlined { font-size: 23px; }
       .add-button { height: 40px; font-size: 14px; padding: 0 12px; }
       .assignment-list { padding: 0 12px; }
-      .assignment-card { padding: 10px 10px; gap: 6px; border-radius: 10px; }
-      .assignment-title { font-size: 14px; }
-      .assignment-due   { font-size: 12px; }
-      .subject-select  { font-size: 11px; padding: 5px; border-radius: 6px; border-width: 1.5px; max-width: 80px; }
-      .priority-select { font-size: 11px; padding: 5px; border-radius: 6px; border-width: 1.5px; max-width: 68px; }
-      .edit-button img { width: 28px; height: 28px; }
+      .assignment-card { padding: 12px 4px; gap: 8px; }
+      .assignment-title { font-size: 13px; }
+      .assignment-subject-label { font-size: 11px; }
+      .priority-badge { font-size: 11px; padding: 2px 8px; }
+      .card-due { font-size: 12px; min-width: 44px; }
+      .edit-button img { width: 18px; height: 18px; }
       .checkbox-wrapper { width: 30px; height: 30px; margin-right: 4px; }
       .checkbox-wrapper .cb-box { width: 22px; height: 22px; }
       .checkbox-wrapper .cb-check { font-size: 14px; }
@@ -627,11 +649,30 @@
     }
   }
 
+  function fmtDue(due) {
+    if (!due) return '';
+    const d = new Date(due);
+    if (isNaN(d)) return due;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff === 0) return 'Today';
+    if (diff === 1) return 'Tomorrow';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  function isUrgent(due) {
+    if (!due) return false;
+    const d = new Date(due);
+    if (isNaN(d)) return false;
+    const today = new Date(); today.setHours(0,0,0,0);
+    return Math.round((d - today) / 86400000) <= 1;
+  }
+
   function addAssignmentToDOM(a) {
     const card = document.createElement('div');
     card.className = 'assignment-card';
     if (a.completed) card.classList.add('completed');
 
+    // Checkbox
     const cbWrap = document.createElement('div');
     cbWrap.className = 'checkbox-wrapper';
     if (a.completed) cbWrap.classList.add('checked-js');
@@ -640,37 +681,39 @@
     cbBox.appendChild(cbCheck); cbWrap.appendChild(cbBox);
     cbWrap.addEventListener('click', () => toggleCompleted(cbWrap, a));
 
+    // Title + subject
     const content = document.createElement('div'); content.className = 'card-content';
     const t = document.createElement('div'); t.className = 'assignment-title'; t.textContent = a.title;
-    const d = document.createElement('div'); d.className = 'assignment-due'; d.textContent = 'Due ' + a.due;
-    content.appendChild(t); content.appendChild(d);
+    const s = document.createElement('div'); s.className = 'assignment-subject-label';
+    s.textContent = a.subject ? a.subject.charAt(0).toUpperCase() + a.subject.slice(1) : '';
+    content.appendChild(t); content.appendChild(s);
 
-    const subjectSelect = document.createElement('select'); subjectSelect.className = 'subject-select';
-    ['math','science','english','history','orchestra','spanish'].forEach(subj => {
-      const o = document.createElement('option');
-      o.value = subj; o.textContent = subj.charAt(0).toUpperCase() + subj.slice(1);
-      if (subj === a.subject) o.selected = true;
-      subjectSelect.appendChild(o);
-    });
-    updateSubjectColor(subjectSelect);
-    subjectSelect.onchange = async () => { a.subject = subjectSelect.value; updateSubjectColor(subjectSelect); await saveAssignments(); await syncCalendarEvents(); };
+    // Right side: date + priority badge + edit
+    const right = document.createElement('div'); right.className = 'card-right';
 
-    const prioritySelect = document.createElement('select'); prioritySelect.className = 'priority-select';
-    ['low','medium','high'].forEach(opt => {
-      const o = document.createElement('option');
-      o.value = opt; o.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
-      if (opt === a.priority) o.selected = true;
-      prioritySelect.appendChild(o);
-    });
-    updatePriorityColor(prioritySelect);
-    prioritySelect.onchange = async () => { a.priority = prioritySelect.value; updatePriorityColor(prioritySelect); await saveAssignments(); await syncCalendarEvents(); renderAssignments(); };
+    const dateStr = fmtDue(a.due);
+    if (dateStr) {
+      const dateEl = document.createElement('span');
+      dateEl.className = 'card-due' + (isUrgent(a.due) ? ' urgent' : '');
+      dateEl.textContent = dateStr;
+      right.appendChild(dateEl);
+    }
+
+    if (a.priority) {
+      const badge = document.createElement('span');
+      badge.className = 'priority-badge badge-' + a.priority;
+      badge.textContent = a.priority.charAt(0).toUpperCase() + a.priority.slice(1);
+      right.appendChild(badge);
+    }
 
     const editBtn = document.createElement('button'); editBtn.className = 'edit-button';
     const icon = document.createElement('img'); icon.src = 'edit1.png'; icon.alt = 'Edit';
     editBtn.appendChild(icon); editBtn.onclick = () => openEditModal(a);
+    right.appendChild(editBtn);
 
-    card.appendChild(cbWrap); card.appendChild(content);
-    card.appendChild(subjectSelect); card.appendChild(prioritySelect); card.appendChild(editBtn);
+    card.appendChild(cbWrap);
+    card.appendChild(content);
+    card.appendChild(right);
     list.appendChild(card);
   }
 
@@ -680,15 +723,6 @@
     card.classList.toggle('completed', assignment.completed);
     cbWrap.classList.toggle('checked-js', assignment.completed);
     await saveAssignments(); await syncCalendarEvents(); renderAssignments();
-  }
-
-  function updateSubjectColor(select) {
-    select.classList.remove('subject-math','subject-science','subject-english','subject-history','subject-orchestra','subject-spanish');
-    select.classList.add('subject-' + select.value);
-  }
-  function updatePriorityColor(select) {
-    select.classList.remove('priority-low','priority-medium','priority-high');
-    select.classList.add('priority-' + select.value);
   }
 
   function openEditModal(assignment) {
